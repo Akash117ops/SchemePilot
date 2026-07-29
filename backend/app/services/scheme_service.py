@@ -2,16 +2,20 @@ from sqlalchemy.orm import Session
 
 from app.models.scheme import Scheme
 from app.schemas.scheme import SchemeCreate
+from app.schemas.eligibility import EligibilityRequest
 
 
 def create_scheme(db: Session, scheme: SchemeCreate):
     new_scheme = Scheme(
         name=scheme.name,
         description=scheme.description,
-        ministry=scheme.ministry,
-        eligibility=scheme.eligibility,
-        benefits=scheme.benefits,
-        state=scheme.state
+        state=scheme.state,
+        category=scheme.category,
+        gender=scheme.gender,
+        occupation=scheme.occupation,
+        min_age=scheme.min_age,
+        max_age=scheme.max_age,
+        income_limit=scheme.income_limit,
     )
 
     db.add(new_scheme)
@@ -26,6 +30,50 @@ def get_all_schemes(db: Session):
 
 
 def get_scheme_by_id(db: Session, scheme_id: int):
-    return db.query(Scheme).filter(
-        Scheme.id == scheme_id
-    ).first()
+    return db.query(Scheme).filter(Scheme.id == scheme_id).first()
+
+
+def find_eligible_schemes(db: Session, user: EligibilityRequest):
+    schemes = db.query(Scheme).all()
+
+    eligible = []
+
+    for scheme in schemes:
+
+        # State
+        if scheme.state.lower() != user.state.lower():
+            continue
+
+        # Category
+        if scheme.category and scheme.category.lower() != "any":
+            if scheme.category.lower() != user.category.lower():
+                continue
+
+        # Gender
+        if scheme.gender and scheme.gender.lower() != "any":
+            if scheme.gender.lower() != user.gender.lower():
+                continue
+
+        # Occupation
+        if scheme.occupation and scheme.occupation.lower() != "any":
+            if scheme.occupation.lower() != user.occupation.lower():
+                continue
+
+        # Minimum age
+        if scheme.min_age is not None:
+            if user.age < scheme.min_age:
+                continue
+
+        # Maximum age
+        if scheme.max_age is not None:
+            if user.age > scheme.max_age:
+                continue
+
+        # Income limit
+        if scheme.income_limit is not None:
+            if user.annual_income > scheme.income_limit:
+                continue
+
+        eligible.append(scheme)
+
+    return eligible

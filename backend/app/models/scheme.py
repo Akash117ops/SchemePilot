@@ -8,24 +8,20 @@ class Scheme(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    scheme_name = Column(String(255), nullable=False)
+    name = Column(String, nullable=False)
 
     description = Column(Text, nullable=False)
 
-    state = Column(String(100), nullable=False)
+    state = Column(String, nullable=False)
 
-    category = Column(String(100), nullable=False)
+    category = Column(String, nullable=True)
 
-    min_age = Column(Integer)
+    gender = Column(String, nullable=True)
 
-    max_age = Column(Integer)
+    occupation = Column(String, nullable=True)
 
-    gender = Column(String(20))
+    min_age = Column(Integer, nullable=True)
 
-    caste = Column(String(50))
+    max_age = Column(Integer, nullable=True)
 
-    income_limit = Column(Integer)
-
-    benefits = Column(Text)
-
-    application_link = Column(String(500))
+    income_limit = Column(Integer, nullable=True)
