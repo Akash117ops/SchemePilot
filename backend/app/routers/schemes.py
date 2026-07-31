@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends,HTTPException
 from sqlalchemy.orm import Session
 from app.utils.dependencies import get_current_user
 from app.models.user import User
@@ -48,7 +48,15 @@ def read_scheme(
     scheme_id: int,
     db: Session = Depends(get_db)
 ):
-    return get_scheme_by_id(db, scheme_id)
+    scheme = get_scheme_by_id(db, scheme_id)
+
+    if scheme is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Scheme not found"
+        )
+
+    return scheme
 
 
 @router.post("/eligible", response_model=list[SchemeResponse])
