@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from app.utils.dependencies import get_current_user
+from app.models.user import User
 
 from app.database import SessionLocal
 from app.schemas.scheme import SchemeCreate, SchemeResponse
@@ -28,7 +30,8 @@ def get_db():
 @router.post("/", response_model=SchemeResponse)
 def add_scheme(
     scheme: SchemeCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     return create_scheme(db, scheme)
 
