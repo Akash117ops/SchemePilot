@@ -11,6 +11,7 @@ from app.services.scheme_service import (
     get_all_schemes,
     get_scheme_by_id,
     find_eligible_schemes,
+    find_eligible_schemes_by_user,
 )
 
 router = APIRouter(
@@ -65,3 +66,21 @@ def get_eligible_schemes(
     db: Session = Depends(get_db)
 ):
     return find_eligible_schemes(db, user)
+
+@router.post("/my-eligible", response_model=list[SchemeResponse])
+def get_my_eligible_schemes(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    schemes = find_eligible_schemes_by_user(
+        db,
+        current_user.id
+    )
+
+    if schemes is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Profile not found"
+        )
+
+    return schemes

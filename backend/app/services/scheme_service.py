@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from app.models.profile import UserProfile
 
 from app.models.scheme import Scheme
 from app.schemas.scheme import SchemeCreate
@@ -72,6 +73,53 @@ def find_eligible_schemes(db: Session, user: EligibilityRequest):
         # Income limit
         if scheme.income_limit is not None:
             if user.annual_income > scheme.income_limit:
+                continue
+
+        eligible.append(scheme)
+
+    return eligible
+
+def find_eligible_schemes_by_user(db: Session, user_id: int):
+    profile = (
+        db.query(UserProfile)
+        .filter(UserProfile.user_id == user_id)
+        .first()
+    )
+
+    if profile is None:
+        return None
+
+    schemes = db.query(Scheme).all()
+
+    eligible = []
+
+    for scheme in schemes:
+
+        if scheme.state.lower() != profile.state.lower():
+            continue
+
+        if scheme.category and scheme.category.lower() != "any":
+            if scheme.category.lower() != profile.category.lower():
+                continue
+
+        if scheme.gender and scheme.gender.lower() != "any":
+            if scheme.gender.lower() != profile.gender.lower():
+                continue
+
+        if scheme.occupation and scheme.occupation.lower() != "any":
+            if scheme.occupation.lower() != profile.occupation.lower():
+                continue
+
+        if scheme.min_age is not None:
+            if profile.age < scheme.min_age:
+                continue
+
+        if scheme.max_age is not None:
+            if profile.age > scheme.max_age:
+                continue
+
+        if scheme.income_limit is not None:
+            if profile.annual_income > scheme.income_limit:
                 continue
 
         eligible.append(scheme)
