@@ -125,3 +125,36 @@ def find_eligible_schemes_by_user(db: Session, user_id: int):
         eligible.append(scheme)
 
     return eligible
+
+def search_schemes(db: Session, keyword: str):
+    return (
+        db.query(Scheme)
+        .filter(
+            (Scheme.name.ilike(f"%{keyword}%")) |
+            (Scheme.description.ilike(f"%{keyword}%"))
+        )
+        .all()
+    )
+
+def filter_schemes(
+    db: Session,
+    state: str = None,
+    category: str = None,
+    occupation: str = None,
+    gender: str = None,
+):
+    query = db.query(Scheme)
+
+    if state:
+        query = query.filter(Scheme.state.ilike(state))
+
+    if category:
+        query = query.filter(Scheme.category.ilike(category))
+
+    if occupation:
+        query = query.filter(Scheme.occupation.ilike(occupation))
+
+    if gender:
+        query = query.filter(Scheme.gender.ilike(gender))
+
+    return query.all()

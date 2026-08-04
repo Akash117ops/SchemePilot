@@ -12,6 +12,8 @@ from app.services.scheme_service import (
     get_scheme_by_id,
     find_eligible_schemes,
     find_eligible_schemes_by_user,
+    search_schemes,
+    filter_schemes,
 )
 
 router = APIRouter(
@@ -42,6 +44,29 @@ def read_schemes(
     db: Session = Depends(get_db)
 ):
     return get_all_schemes(db)
+
+@router.get("/search", response_model=list[SchemeResponse])
+def search_all_schemes(
+    keyword: str,
+    db: Session = Depends(get_db)
+):
+    return search_schemes(db, keyword)
+
+@router.get("/filter", response_model=list[SchemeResponse])
+def filter_all_schemes(
+    state: str | None = None,
+    category: str | None = None,
+    occupation: str | None = None,
+    gender: str | None = None,
+    db: Session = Depends(get_db)
+):
+    return filter_schemes(
+        db=db,
+        state=state,
+        category=category,
+        occupation=occupation,
+        gender=gender,
+    )
 
 
 @router.get("/{scheme_id}", response_model=SchemeResponse)
@@ -84,3 +109,4 @@ def get_my_eligible_schemes(
         )
 
     return schemes
+
