@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Depends,HTTPException
 from sqlalchemy.orm import Session
-from app.utils.dependencies import get_current_user
+from app.utils.dependencies import (
+    get_current_user,
+    get_current_admin,
+)
 from app.models.user import User
 
 from app.database import SessionLocal
@@ -36,7 +39,7 @@ def get_db():
 def add_scheme(
     scheme: SchemeCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_admin)
 ):
     return create_scheme(db, scheme)
 
