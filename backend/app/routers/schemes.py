@@ -14,6 +14,8 @@ from app.services.scheme_service import (
     find_eligible_schemes_by_user,
     search_schemes,
     filter_schemes,
+    get_schemes_paginated, 
+    sort_schemes,
 )
 
 router = APIRouter(
@@ -68,6 +70,28 @@ def filter_all_schemes(
         gender=gender,
     )
 
+@router.get("/paginated", response_model=list[SchemeResponse])
+def read_schemes_paginated(
+    page: int = 1,
+    limit: int = 10,
+    db: Session = Depends(get_db)
+):
+    return get_schemes_paginated(
+        db=db,
+        page=page,
+        limit=limit,
+    )
+@router.get("/sorted", response_model=list[SchemeResponse])
+def read_sorted_schemes(
+    sort_by: str = "name",
+    order: str = "asc",
+    db: Session = Depends(get_db)
+):
+    return sort_schemes(
+        db=db,
+        sort_by=sort_by,
+        order=order,
+    )
 
 @router.get("/{scheme_id}", response_model=SchemeResponse)
 def read_scheme(

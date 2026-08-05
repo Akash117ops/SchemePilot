@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.profile import UserProfile
+from sqlalchemy import asc, desc
 
 from app.models.scheme import Scheme
 from app.schemas.scheme import SchemeCreate
@@ -158,3 +159,50 @@ def filter_schemes(
         query = query.filter(Scheme.gender.ilike(gender))
 
     return query.all()
+
+def get_schemes_paginated(
+    db: Session,
+    page: int = 1,
+    limit: int = 10,
+):
+    offset = (page - 1) * limit
+
+    return (
+        db.query(Scheme)
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+
+from sqlalchemy import asc, desc
+
+
+def sort_schemes(
+    db: Session,
+    sort_by: str = "name",
+    order: str = "asc",
+):
+    allowed_fields = {
+        "name": Scheme.name,
+        "income_limit": Scheme.income_limit,
+        "min_age": Scheme.min_age,
+        "max_age": Scheme.max_age,
+    }
+
+    column = allowed_fields.get(sort_by)
+
+    if column is None:
+        return []
+
+    if order.lower() == "desc":
+        return (
+            db.query(Scheme)
+            .order_by(desc(column))
+            .all()
+        )
+
+    return (
+        db.query(Scheme)
+        .order_by(asc(column))
+        .all()
+    )
