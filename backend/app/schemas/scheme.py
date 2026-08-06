@@ -5,7 +5,6 @@ class SchemeCreate(BaseModel):
     name: str
     description: str
 
-    # NEW
     benefits: str | None = None
     required_documents: str | None = None
     application_link: str | None = None
@@ -25,7 +24,6 @@ class SchemeResponse(BaseModel):
     name: str
     description: str
 
-    # NEW
     benefits: str | None = None
     required_documents: str | None = None
     application_link: str | None = None

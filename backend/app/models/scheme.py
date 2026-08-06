@@ -12,16 +12,12 @@ class Scheme(Base):
 
     description = Column(Text, nullable=False)
 
-    # NEW
     benefits = Column(Text, nullable=True)
 
-    # NEW
     required_documents = Column(Text, nullable=True)
 
-    # NEW
     application_link = Column(String, nullable=True)
 
-    # NEW
     official_website = Column(String, nullable=True)
 
     state = Column(String, nullable=False)
