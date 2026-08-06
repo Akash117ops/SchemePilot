@@ -6,11 +6,17 @@ from app.models.scheme import Scheme
 from app.schemas.scheme import SchemeCreate
 from app.schemas.eligibility import EligibilityRequest
 
-
 def create_scheme(db: Session, scheme: SchemeCreate):
     new_scheme = Scheme(
         name=scheme.name,
         description=scheme.description,
+
+        # NEW
+        benefits=scheme.benefits,
+        required_documents=scheme.required_documents,
+        application_link=scheme.application_link,
+        official_website=scheme.official_website,
+
         state=scheme.state,
         category=scheme.category,
         gender=scheme.gender,

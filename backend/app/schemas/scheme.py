@@ -4,6 +4,13 @@ from pydantic import BaseModel
 class SchemeCreate(BaseModel):
     name: str
     description: str
+
+    # NEW
+    benefits: str | None = None
+    required_documents: str | None = None
+    application_link: str | None = None
+    official_website: str | None = None
+
     state: str
     category: str | None = None
     gender: str | None = None
@@ -17,6 +24,13 @@ class SchemeResponse(BaseModel):
     id: int
     name: str
     description: str
+
+    # NEW
+    benefits: str | None = None
+    required_documents: str | None = None
+    application_link: str | None = None
+    official_website: str | None = None
+
     state: str
     category: str | None = None
     gender: str | None = None
