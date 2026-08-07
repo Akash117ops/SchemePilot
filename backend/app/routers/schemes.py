@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends,HTTPException
 from sqlalchemy.orm import Session
-from app.utils.dependencies import (
+from app.dependencies import (
     get_current_user,
     get_current_admin,
 )
@@ -11,13 +11,15 @@ from app.schemas.scheme import SchemeCreate, SchemeResponse
 from app.schemas.eligibility import EligibilityRequest
 from app.services.scheme_service import (
     create_scheme,
+    update_scheme,
+    delete_scheme,
     get_all_schemes,
     get_scheme_by_id,
     find_eligible_schemes,
     find_eligible_schemes_by_user,
     search_schemes,
     filter_schemes,
-    get_schemes_paginated, 
+    get_schemes_paginated,
     sort_schemes,
 )
 
@@ -42,6 +44,49 @@ def add_scheme(
     current_user: User = Depends(get_current_admin)
 ):
     return create_scheme(db, scheme)
+
+
+@router.put("/{scheme_id}", response_model=SchemeResponse)
+def edit_scheme(
+    scheme_id: int,
+    updated_scheme: SchemeCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin),
+):
+    scheme = update_scheme(
+        db=db,
+        scheme_id=scheme_id,
+        updated_scheme=updated_scheme,
+    )
+
+    if scheme is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Scheme not found",
+        )
+
+    return scheme
+
+@router.delete("/{scheme_id}")
+def remove_scheme(
+    scheme_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin),
+):
+    deleted = delete_scheme(
+        db=db,
+        scheme_id=scheme_id,
+    )
+
+    if not deleted:
+        raise HTTPException(
+            status_code=404,
+            detail="Scheme not found",
+        )
+
+    return {
+        "message": "Scheme deleted successfully"
+    }
 
 
 @router.get("/", response_model=list[SchemeResponse])

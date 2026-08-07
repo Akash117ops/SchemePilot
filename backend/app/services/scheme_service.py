@@ -33,6 +33,56 @@ def create_scheme(db: Session, scheme: SchemeCreate):
 
     return new_scheme
 
+def update_scheme(
+    db: Session,
+    scheme_id: int,
+    updated_scheme: SchemeCreate,
+):
+    scheme = (
+        db.query(Scheme)
+        .filter(Scheme.id == scheme_id)
+        .first()
+    )
+
+    if scheme is None:
+        return None
+
+    scheme.name = updated_scheme.name
+    scheme.description = updated_scheme.description
+    scheme.benefits = updated_scheme.benefits
+    scheme.required_documents = updated_scheme.required_documents
+    scheme.application_link = updated_scheme.application_link
+    scheme.official_website = updated_scheme.official_website
+    scheme.state = updated_scheme.state
+    scheme.category = updated_scheme.category
+    scheme.gender = updated_scheme.gender
+    scheme.occupation = updated_scheme.occupation
+    scheme.min_age = updated_scheme.min_age
+    scheme.max_age = updated_scheme.max_age
+    scheme.income_limit = updated_scheme.income_limit
+
+    db.commit()
+    db.refresh(scheme)
+
+    return scheme
+
+def delete_scheme(
+    db: Session,
+    scheme_id: int,
+):
+    scheme = (
+        db.query(Scheme)
+        .filter(Scheme.id == scheme_id)
+        .first()
+    )
+
+    if scheme is None:
+        return False
+
+    db.delete(scheme)
+    db.commit()
+
+    return True
 
 def get_all_schemes(db: Session):
     return db.query(Scheme).all()
