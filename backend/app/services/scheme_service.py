@@ -99,32 +99,40 @@ def find_eligible_schemes(db: Session, user: EligibilityRequest):
 
     for scheme in schemes:
 
-        if scheme.state.lower() != user.state.lower():
-            continue
+        # State
+        if scheme.state and scheme.state.lower() != "any":
+            if scheme.state.lower() != user.state.lower():
+                continue
 
+        # Category
         if scheme.category and scheme.category.lower() != "any":
             if scheme.category.lower() != user.category.lower():
                 continue
 
+        # Gender
         if scheme.gender and scheme.gender.lower() != "any":
             if scheme.gender.lower() != user.gender.lower():
                 continue
 
+        # Occupation
         if scheme.occupation and scheme.occupation.lower() != "any":
             if scheme.occupation.lower() != user.occupation.lower():
                 continue
 
-        if scheme.min_age is not None and user.age < scheme.min_age:
-            continue
+        # Minimum age
+        if scheme.min_age is not None:
+            if user.age < scheme.min_age:
+                continue
 
-        if scheme.max_age is not None and user.age > scheme.max_age:
-            continue
+        # Maximum age
+        if scheme.max_age is not None:
+            if user.age > scheme.max_age:
+                continue
 
-        if (
-            scheme.income_limit is not None
-            and user.annual_income > scheme.income_limit
-        ):
-            continue
+        # Income limit
+        if scheme.income_limit is not None:
+            if user.annual_income > scheme.income_limit:
+                continue
 
         eligible.append(scheme)
 
@@ -147,37 +155,44 @@ def find_eligible_schemes_by_user(db: Session, user_id: int):
 
     for scheme in schemes:
 
-        if scheme.state.lower() != profile.state.lower():
-            continue
+        # State
+        if scheme.state and scheme.state.lower() != "any":
+            if scheme.state.lower() != profile.state.lower():
+                continue
 
+        # Category
         if scheme.category and scheme.category.lower() != "any":
             if scheme.category.lower() != profile.category.lower():
                 continue
 
+        # Gender
         if scheme.gender and scheme.gender.lower() != "any":
             if scheme.gender.lower() != profile.gender.lower():
                 continue
 
+        # Occupation
         if scheme.occupation and scheme.occupation.lower() != "any":
             if scheme.occupation.lower() != profile.occupation.lower():
                 continue
 
-        if scheme.min_age is not None and profile.age < scheme.min_age:
-            continue
+        # Minimum age
+        if scheme.min_age is not None:
+            if profile.age < scheme.min_age:
+                continue
 
-        if scheme.max_age is not None and profile.age > scheme.max_age:
-            continue
+        # Maximum age
+        if scheme.max_age is not None:
+            if profile.age > scheme.max_age:
+                continue
 
-        if (
-            scheme.income_limit is not None
-            and profile.annual_income > scheme.income_limit
-        ):
-            continue
+        # Income limit
+        if scheme.income_limit is not None:
+            if profile.annual_income > scheme.income_limit:
+                continue
 
         eligible.append(scheme)
 
     return eligible
-
 
 def search_schemes(db: Session, keyword: str):
     return (
