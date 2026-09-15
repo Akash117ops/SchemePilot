@@ -1479,3 +1479,13 @@ a {
     grid-template-columns: 1fr;
   }
 }
+.auth-server-error {
+  margin-bottom: 18px;
+  padding: 11px 13px;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 13px;
+  line-height: 1.5;
+}

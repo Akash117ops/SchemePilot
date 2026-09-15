@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
 from app.models import User, Scheme, UserProfile, Favorite
@@ -8,7 +9,9 @@ from app.routers.schemes import router as scheme_router
 from app.routers.profile import router as profile_router
 from app.routers.favorites import router as favorite_router
 
+
 Base.metadata.create_all(bind=engine)
+
 
 tags_metadata = [
     {
@@ -28,6 +31,7 @@ tags_metadata = [
         "description": "Save and manage favorite schemes for logged-in users.",
     },
 ]
+
 
 app = FastAPI(
     title="SchemePilot API",
@@ -51,6 +55,27 @@ Built using FastAPI, PostgreSQL and SQLAlchemy.
     version="1.0.0",
     openapi_tags=tags_metadata,
 )
+
+
+# --------------------------------------------------
+# CORS Configuration
+# --------------------------------------------------
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# --------------------------------------------------
+# Routers
+# --------------------------------------------------
 
 app.include_router(auth_router, tags=["Auth"])
 app.include_router(scheme_router, tags=["Schemes"])

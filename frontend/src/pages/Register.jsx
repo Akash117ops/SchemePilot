@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { registerUser } from "../services/api";
 
 const COMMON_PASSWORDS = new Set([
   "password",
@@ -31,8 +32,15 @@ const COMMON_PASSWORDS = new Set([
 ]);
 
 function Register() {
+  const navigate = useNavigate();
+
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState("");
 
   const passwordRules = [
     {
@@ -69,8 +77,10 @@ function Register() {
   const passwordsMatch =
     confirmPassword.length > 0 && password === confirmPassword;
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
+    setServerError("");
 
     if (!passwordIsValid) {
       return;
@@ -80,8 +90,28 @@ function Register() {
       return;
     }
 
-    // Backend registration will be connected here next.
-    console.log("Registration submitted");
+    setIsLoading(true);
+
+    try {
+      await registerUser({
+        full_name: fullName,
+        email,
+        password,
+      });
+
+      navigate("/login", {
+        state: {
+          registrationSuccess:
+            "Account created successfully. Please login.",
+        },
+      });
+    } catch (error) {
+      setServerError(
+        error.message || "Registration failed. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -113,6 +143,12 @@ function Register() {
           <p>Start discovering government schemes relevant to you.</p>
         </div>
 
+        {serverError && (
+          <div className="auth-server-error">
+            {serverError}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="auth-form">
           {/* Full Name */}
           <div className="form-group">
@@ -125,14 +161,20 @@ function Register() {
                 id="full-name"
                 type="text"
                 placeholder="Enter your full name"
+                value={fullName}
+                onChange={(event) => setFullName(event.target.value)}
                 required
+                minLength={2}
+                maxLength={100}
               />
             </div>
           </div>
 
           {/* Email */}
           <div className="form-group">
-            <label htmlFor="register-email">Email address</label>
+            <label htmlFor="register-email">
+              Email address
+            </label>
 
             <div className="input-wrapper">
               <Mail size={18} />
@@ -141,6 +183,8 @@ function Register() {
                 id="register-email"
                 type="email"
                 placeholder="you@example.com"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
                 required
               />
             </div>
@@ -152,7 +196,9 @@ function Register() {
 
             <div
               className={`input-wrapper ${
-                password && !passwordIsValid ? "input-error" : ""
+                password && !passwordIsValid
+                  ? "input-error"
+                  : ""
               } ${
                 passwordIsValid ? "input-success" : ""
               }`}
@@ -164,7 +210,9 @@ function Register() {
                 type="password"
                 placeholder="Create a strong password"
                 value={password}
-                onChange={(event) => setPassword(event.target.value)}
+                onChange={(event) =>
+                  setPassword(event.target.value)
+                }
                 required
               />
             </div>
@@ -242,10 +290,17 @@ function Register() {
           <button
             type="submit"
             className="auth-submit"
-            disabled={!passwordIsValid || !passwordsMatch}
+            disabled={
+              !passwordIsValid ||
+              !passwordsMatch ||
+              !fullName.trim() ||
+              !email.trim() ||
+              isLoading
+            }
           >
-            Create Account
-            <ArrowRight size={18} />
+            {isLoading ? "Creating account..." : "Create Account"}
+
+            {!isLoading && <ArrowRight size={18} />}
           </button>
         </form>
 
