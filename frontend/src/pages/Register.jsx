@@ -1,19 +1,60 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
+  Check,
   LockKeyhole,
   Mail,
   Sparkles,
   User,
+  X,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 function Register() {
-  const navigate = useNavigate();
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const passwordRules = [
+    {
+      label: "At least 8 characters",
+      valid: password.length >= 8,
+    },
+    {
+      label: "One uppercase letter",
+      valid: /[A-Z]/.test(password),
+    },
+    {
+      label: "One lowercase letter",
+      valid: /[a-z]/.test(password),
+    },
+    {
+      label: "One number",
+      valid: /\d/.test(password),
+    },
+    {
+      label: "One special character",
+      valid: /[^A-Za-z0-9]/.test(password),
+    },
+  ];
+
+  const passwordIsValid =
+    password.length > 0 && passwordRules.every((rule) => rule.valid);
+
+  const passwordsMatch =
+    confirmPassword.length > 0 && password === confirmPassword;
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    if (!passwordIsValid) {
+      return;
+    }
+
+    if (!passwordsMatch) {
+      return;
+    }
 
     // Backend registration will be connected here next.
     console.log("Registration submitted");
@@ -30,7 +71,7 @@ function Register() {
       </Link>
 
       <motion.div
-        className="auth-card"
+        className="auth-card register-card"
         initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -82,36 +123,76 @@ function Register() {
           <div className="form-group">
             <label htmlFor="register-password">Password</label>
 
-            <div className="input-wrapper">
+            <div
+              className={`input-wrapper ${
+                password && !passwordIsValid ? "input-error" : ""
+              }`}
+            >
               <LockKeyhole size={18} />
 
               <input
                 id="register-password"
                 type="password"
-                placeholder="Create a password"
-                minLength={6}
+                placeholder="Create a strong password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
                 required
               />
+            </div>
+
+            <div className="password-requirements">
+              {passwordRules.map((rule) => (
+                <div
+                  className={`password-rule ${
+                    rule.valid ? "valid" : ""
+                  }`}
+                  key={rule.label}
+                >
+                  {rule.valid ? <Check size={14} /> : <X size={14} />}
+                  <span>{rule.label}</span>
+                </div>
+              ))}
             </div>
           </div>
 
           <div className="form-group">
             <label htmlFor="confirm-password">Confirm password</label>
 
-            <div className="input-wrapper">
+            <div
+              className={`input-wrapper ${
+                confirmPassword && !passwordsMatch ? "input-error" : ""
+              } ${
+                passwordsMatch ? "input-success" : ""
+              }`}
+            >
               <LockKeyhole size={18} />
 
               <input
                 id="confirm-password"
                 type="password"
-                placeholder="Confirm your password"
-                minLength={6}
+                placeholder="Re-enter your password"
+                value={confirmPassword}
+                onChange={(event) =>
+                  setConfirmPassword(event.target.value)
+                }
                 required
               />
             </div>
+
+            {confirmPassword && !passwordsMatch && (
+              <p className="field-error">Passwords do not match.</p>
+            )}
+
+            {passwordsMatch && (
+              <p className="field-success">Passwords match.</p>
+            )}
           </div>
 
-          <button type="submit" className="auth-submit">
+          <button
+            type="submit"
+            className="auth-submit"
+            disabled={!passwordIsValid || !passwordsMatch}
+          >
             Create Account
             <ArrowRight size={18} />
           </button>

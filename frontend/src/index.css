@@ -1393,3 +1393,89 @@ a {
     font-size: 27px;
   }
 }
+/* =========================
+   REGISTER PASSWORD VALIDATION
+========================= */
+
+.register-card {
+  max-width: 470px;
+}
+
+.password-requirements {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px 12px;
+  margin-top: 4px;
+}
+
+.password-rule {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  color: #94a3b8;
+  font-size: 11px;
+
+  transition: color 0.2s ease;
+}
+
+.password-rule svg {
+  flex-shrink: 0;
+}
+
+.password-rule.valid {
+  color: #16a34a;
+}
+
+.input-wrapper.input-error {
+  border-color: #ef4444;
+}
+
+.input-wrapper.input-error:focus-within {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.input-wrapper.input-success {
+  border-color: #22c55e;
+}
+
+.input-wrapper.input-success:focus-within {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+.field-error,
+.field-success {
+  margin: 0;
+
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.field-error {
+  color: #dc2626;
+}
+
+.field-success {
+  color: #16a34a;
+}
+
+.auth-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.auth-submit:disabled:hover {
+  background: #111827;
+  transform: none;
+  box-shadow: none;
+}
+
+@media (max-width: 500px) {
+  .password-requirements {
+    grid-template-columns: 1fr;
+  }
+}
