@@ -12,6 +12,24 @@ import {
 import { motion } from "framer-motion";
 import { useState } from "react";
 
+const COMMON_PASSWORDS = new Set([
+  "password",
+  "password1",
+  "password123",
+  "12345678",
+  "123456789",
+  "1234567890",
+  "qwerty",
+  "qwerty123",
+  "admin123",
+  "welcome123",
+  "letmein",
+  "iloveyou",
+  "abc123",
+  "11111111",
+  "00000000",
+]);
+
 function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -39,8 +57,14 @@ function Register() {
     },
   ];
 
+  const passwordIsCommon = COMMON_PASSWORDS.has(
+    password.toLowerCase()
+  );
+
   const passwordIsValid =
-    password.length > 0 && passwordRules.every((rule) => rule.valid);
+    password.length > 0 &&
+    passwordRules.every((rule) => rule.valid) &&
+    !passwordIsCommon;
 
   const passwordsMatch =
     confirmPassword.length > 0 && password === confirmPassword;
@@ -90,6 +114,7 @@ function Register() {
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
+          {/* Full Name */}
           <div className="form-group">
             <label htmlFor="full-name">Full name</label>
 
@@ -105,6 +130,7 @@ function Register() {
             </div>
           </div>
 
+          {/* Email */}
           <div className="form-group">
             <label htmlFor="register-email">Email address</label>
 
@@ -120,12 +146,15 @@ function Register() {
             </div>
           </div>
 
+          {/* Password */}
           <div className="form-group">
             <label htmlFor="register-password">Password</label>
 
             <div
               className={`input-wrapper ${
                 password && !passwordIsValid ? "input-error" : ""
+              } ${
+                passwordIsValid ? "input-success" : ""
               }`}
             >
               <LockKeyhole size={18} />
@@ -148,19 +177,36 @@ function Register() {
                   }`}
                   key={rule.label}
                 >
-                  {rule.valid ? <Check size={14} /> : <X size={14} />}
+                  {rule.valid ? (
+                    <Check size={14} />
+                  ) : (
+                    <X size={14} />
+                  )}
+
                   <span>{rule.label}</span>
                 </div>
               ))}
             </div>
+
+            {passwordIsCommon && (
+              <p className="field-error">
+                This password is too common. Please choose a
+                stronger password.
+              </p>
+            )}
           </div>
 
+          {/* Confirm Password */}
           <div className="form-group">
-            <label htmlFor="confirm-password">Confirm password</label>
+            <label htmlFor="confirm-password">
+              Confirm password
+            </label>
 
             <div
               className={`input-wrapper ${
-                confirmPassword && !passwordsMatch ? "input-error" : ""
+                confirmPassword && !passwordsMatch
+                  ? "input-error"
+                  : ""
               } ${
                 passwordsMatch ? "input-success" : ""
               }`}
@@ -180,14 +226,19 @@ function Register() {
             </div>
 
             {confirmPassword && !passwordsMatch && (
-              <p className="field-error">Passwords do not match.</p>
+              <p className="field-error">
+                Passwords do not match.
+              </p>
             )}
 
             {passwordsMatch && (
-              <p className="field-success">Passwords match.</p>
+              <p className="field-success">
+                Passwords match.
+              </p>
             )}
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
             className="auth-submit"
