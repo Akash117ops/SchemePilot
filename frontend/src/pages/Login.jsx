@@ -8,11 +8,14 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import { loginUser } from "../services/api";
 
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,7 +36,7 @@ function Login() {
       const data = await loginUser(email, password);
 
       // Store the JWT for authenticated API requests.
-      localStorage.setItem("access_token", data.access_token);
+      login(data.access_token);
 
       // Remove the registration success message from history state.
       window.history.replaceState({}, document.title);
