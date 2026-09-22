@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import Eligibility from "./pages/Eligibility";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -19,6 +20,7 @@ function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/eligibility" element={<Eligibility />} />
       </Route>
     </Routes>
   );
