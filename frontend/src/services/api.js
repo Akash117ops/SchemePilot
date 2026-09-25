@@ -110,3 +110,13 @@ export async function checkEligibility(profileData) {
     body: profileData,
   });
 }
+export async function getSchemeById(schemeId) {
+  const token = localStorage.getItem("access_token");
+
+  return request(`/schemes/${schemeId}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}

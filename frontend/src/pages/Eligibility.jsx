@@ -402,13 +402,13 @@ function Eligibility() {
                       </p>
                     </div>
 
-                    <button
-                      type="button"
-                      className="scheme-result-button"
-                    >
-                      View scheme details
-                      <ArrowRight size={17} />
-                    </button>
+                    <Link
+  to={`/schemes/${scheme.id}`}
+  className="scheme-result-button"
+>
+  View scheme details
+  <ArrowRight size={17} />
+</Link>
                   </motion.article>
                 ))}
               </div>
