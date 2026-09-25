@@ -7,9 +7,12 @@ import {
   Search,
   Sparkles,
   UserRound,
+  FileText,
+  CheckCircle2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { checkEligibility } from "../services/api";
 
 function Eligibility() {
   const [form, setForm] = useState({
@@ -21,7 +24,10 @@ function Eligibility() {
     annual_income: "",
   });
 
+  const [results, setResults] = useState([]);
+  const [hasSearched, setHasSearched] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -34,26 +40,53 @@ function Eligibility() {
     setError("");
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (Number(form.age) < 1 || Number(form.age) > 120) {
-      setError("Please enter a valid age between 1 and 120.");
-      return;
-    }
-
-    if (Number(form.annual_income) < 0) {
-      setError("Annual income cannot be negative.");
-      return;
-    }
-
     setError("");
+    setIsLoading(true);
+    setHasSearched(false);
 
-    console.log("Eligibility form:", {
-      ...form,
+    const eligibilityData = {
       age: Number(form.age),
+      gender: form.gender,
+      state: form.state,
+      category: form.category,
+      occupation: form.occupation,
       annual_income: Number(form.annual_income),
-    });
+    };
+
+    if (
+      !Number.isInteger(eligibilityData.age) ||
+      eligibilityData.age < 1 ||
+      eligibilityData.age > 120
+    ) {
+      setError("Please enter a valid age between 1 and 120.");
+      setIsLoading(false);
+      return;
+    }
+
+    if (eligibilityData.annual_income < 0) {
+      setError("Annual income cannot be negative.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const data = await checkEligibility(eligibilityData);
+
+      console.log("Eligibility results:", data);
+
+      setResults(data);
+      setHasSearched(true);
+    } catch (error) {
+      setError(
+        error.message ||
+          "Unable to check eligibility. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -68,11 +101,13 @@ function Eligibility() {
           <div className="logo-mark">
             <Sparkles size={18} />
           </div>
+
           <span>SchemePilot</span>
         </Link>
       </nav>
 
       <main className="eligibility-content">
+        {/* HEADER */}
         <motion.div
           className="eligibility-header"
           initial={{ opacity: 0, y: 15 }}
@@ -98,6 +133,7 @@ function Eligibility() {
           </div>
         </motion.div>
 
+        {/* FORM */}
         <motion.div
           className="eligibility-card"
           initial={{ opacity: 0, y: 20 }}
@@ -107,6 +143,7 @@ function Eligibility() {
           <div className="eligibility-card-heading">
             <div>
               <h2>Your details</h2>
+
               <p>
                 Enter accurate information for more relevant
                 results.
@@ -130,6 +167,7 @@ function Eligibility() {
             className="eligibility-form"
           >
             <div className="eligibility-form-grid">
+              {/* AGE */}
               <div className="eligibility-field">
                 <label htmlFor="eligibility-age">
                   Age
@@ -152,6 +190,7 @@ function Eligibility() {
                 </div>
               </div>
 
+              {/* GENDER */}
               <div className="eligibility-field">
                 <label htmlFor="eligibility-gender">
                   Gender
@@ -171,6 +210,7 @@ function Eligibility() {
                 </select>
               </div>
 
+              {/* STATE */}
               <div className="eligibility-field">
                 <label htmlFor="eligibility-state">
                   State
@@ -187,6 +227,7 @@ function Eligibility() {
                 />
               </div>
 
+              {/* CATEGORY */}
               <div className="eligibility-field">
                 <label htmlFor="eligibility-category">
                   Social category
@@ -208,6 +249,7 @@ function Eligibility() {
                 </select>
               </div>
 
+              {/* OCCUPATION */}
               <div className="eligibility-field">
                 <label htmlFor="eligibility-occupation">
                   Occupation
@@ -224,6 +266,7 @@ function Eligibility() {
                 />
               </div>
 
+              {/* INCOME */}
               <div className="eligibility-field">
                 <label htmlFor="eligibility-income">
                   Annual income
@@ -257,13 +300,133 @@ function Eligibility() {
               <button
                 type="submit"
                 className="eligibility-submit"
+                disabled={isLoading}
               >
-                Find matching schemes
-                <ArrowRight size={18} />
+                {isLoading
+                  ? "Checking..."
+                  : "Find matching schemes"}
+
+                {!isLoading && <ArrowRight size={18} />}
               </button>
             </div>
           </form>
         </motion.div>
+
+        {/* RESULTS */}
+        {hasSearched && (
+          <motion.section
+            className="eligibility-results"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="eligibility-results-header">
+              <div>
+                <p className="eligibility-eyebrow">
+                  YOUR MATCHES
+                </p>
+
+                <h2>
+                  {results.length > 0
+                    ? `${results.length} schemes may be relevant to you`
+                    : "No matching schemes found"}
+                </h2>
+
+                <p>
+                  Based on the information you provided, these
+                  schemes match the eligibility criteria in
+                  SchemePilot.
+                </p>
+              </div>
+
+              {results.length > 0 && (
+                <div className="eligibility-result-count">
+                  <CheckCircle2 size={18} />
+                  {results.length} matches
+                </div>
+              )}
+            </div>
+
+            {results.length > 0 ? (
+              <div className="eligibility-results-grid">
+                {results.map((scheme, index) => (
+                  <motion.article
+                    key={scheme.id}
+                    className="scheme-result-card"
+                    initial={{
+                      opacity: 0,
+                      y: 20,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+                    transition={{
+                      duration: 0.4,
+                      delay: index * 0.1,
+                    }}
+                  >
+                    <div className="scheme-result-top">
+                      <div className="scheme-result-icon">
+                        <Sparkles size={20} />
+                      </div>
+
+                      <span className="scheme-match-badge">
+                        Eligible match
+                      </span>
+                    </div>
+
+                    <h3>{scheme.name}</h3>
+
+                    <p className="scheme-result-description">
+                      {scheme.description}
+                    </p>
+
+                    <div className="scheme-result-section">
+                      <div className="scheme-result-section-title">
+                        <CheckCircle2 size={16} />
+                        <span>Benefits</span>
+                      </div>
+
+                      <p>{scheme.benefits}</p>
+                    </div>
+
+                    <div className="scheme-result-section">
+                      <div className="scheme-result-section-title">
+                        <FileText size={16} />
+                        <span>Required documents</span>
+                      </div>
+
+                      <p className="scheme-documents">
+                        {scheme.required_documents}
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="scheme-result-button"
+                    >
+                      View scheme details
+                      <ArrowRight size={17} />
+                    </button>
+                  </motion.article>
+                ))}
+              </div>
+            ) : (
+              <div className="eligibility-empty">
+                <Search size={28} />
+
+                <h3>No matching schemes found</h3>
+
+                <p>
+                  We couldn't find schemes matching all the
+                  details you entered. You can try checking again
+                  with different information.
+                </p>
+              </div>
+            )}
+          </motion.section>
+        )}
       </main>
     </div>
   );

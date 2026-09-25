@@ -99,3 +99,14 @@ export async function updateProfile(profileData) {
     body: profileData,
   });
 }
+export async function checkEligibility(profileData) {
+  const token = localStorage.getItem("access_token");
+
+  return request("/schemes/eligible", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: profileData,
+  });
+}
