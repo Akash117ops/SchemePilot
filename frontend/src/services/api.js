@@ -130,3 +130,35 @@ export async function getSchemes() {
     },
   });
 }
+export async function getFavorites() {
+  const token = localStorage.getItem("access_token");
+
+  return request("/favorites", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function addFavorite(schemeId) {
+  const token = localStorage.getItem("access_token");
+
+  return request(`/favorites/${schemeId}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function removeFavorite(schemeId) {
+  const token = localStorage.getItem("access_token");
+
+  return request(`/favorites/${schemeId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}

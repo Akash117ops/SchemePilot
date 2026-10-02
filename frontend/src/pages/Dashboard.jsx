@@ -1,5 +1,12 @@
 import { Link } from "react-router-dom";
-import { LogOut, Search, User, Sparkles } from "lucide-react";
+import {
+  LogOut,
+  Search,
+  User,
+  Sparkles,
+  Heart,
+  ArrowRight,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 
@@ -153,3 +160,11 @@ function Dashboard() {
 }
 
 export default Dashboard;
+<Link to="/favorites" className="dashboard-action-card">
+  <Heart size={22} />
+  <div>
+    <h3>Saved Schemes</h3>
+    <p>View schemes you've saved for later.</p>
+  </div>
+  <ArrowRight size={18} />
+</Link>

@@ -9,6 +9,7 @@ import Eligibility from "./pages/Eligibility";
 import SchemeDetails from "./pages/SchemeDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
 import BrowseSchemes from "./pages/BrowseSchemes";
+import Favorites from "./pages/Favorites";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/eligibility" element={<Eligibility />} />
         <Route path="/schemes" element={<BrowseSchemes />} />
+        <Route path="/favorites" element={<Favorites />} />
 
         <Route
           path="/schemes/:schemeId"
