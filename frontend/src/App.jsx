@@ -8,6 +8,7 @@ import Profile from "./pages/Profile";
 import Eligibility from "./pages/Eligibility";
 import SchemeDetails from "./pages/SchemeDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
+import BrowseSchemes from "./pages/BrowseSchemes";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/eligibility" element={<Eligibility />} />
+        <Route path="/schemes" element={<BrowseSchemes />} />
 
         <Route
           path="/schemes/:schemeId"

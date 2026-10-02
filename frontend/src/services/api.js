@@ -120,3 +120,13 @@ export async function getSchemeById(schemeId) {
     },
   });
 }
+export async function getSchemes() {
+  const token = localStorage.getItem("access_token");
+
+  return request("/schemes/", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
