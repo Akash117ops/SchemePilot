@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
 import {
   ArrowRight,
   Check,
@@ -55,34 +56,8 @@ function Home() {
 
   return (
     <div className="app">
-      {/* Navbar */}
-      <nav className="navbar">
-        <Link to="/" className="logo">
-          <div className="logo-mark">
-            <Sparkles size={18} />
-          </div>
-          <span>SchemePilot</span>
-        </Link>
-
-        <div className="nav-links">
-          <Link to="/" className="active">
-            Home
-          </Link>
-          <Link to="/schemes">Explore Schemes</Link>
-          <a href="#how-it-works">How It Works</a>
-        </div>
-
-        <div className="nav-actions">
-          <Link to="/login" className="login-link">
-            Login
-          </Link>
-
-          <Link to="/register" className="nav-cta">
-            Get Started
-            <ArrowRight size={16} />
-          </Link>
-        </div>
-      </nav>
+      {/* Shared Navbar */}
+      <Navbar />
 
       {/* Hero */}
       <main>

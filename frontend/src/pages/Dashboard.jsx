@@ -3,18 +3,18 @@ import { Link } from "react-router-dom";
 import {
   ArrowRight,
   Heart,
-  LogOut,
   Search,
-  Sparkles,
-  User,
   CheckCircle2,
   CircleUserRound,
   FileCheck2,
+  Sparkles,
+  User,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { useAuth } from "../context/AuthContext";
 import { getProfile, getFavorites } from "../services/api";
+import Navbar from "../components/Navbar";
 
 function Dashboard() {
   const { user, logout } = useAuth();
@@ -85,32 +85,8 @@ function Dashboard() {
 
   return (
     <div className="dashboard-page">
-      {/* Navbar */}
-      <nav className="dashboard-navbar">
-        <Link to="/dashboard" className="dashboard-brand">
-          <div className="dashboard-brand-icon">
-            <Sparkles size={20} />
-          </div>
-
-          <span>SchemePilot</span>
-        </Link>
-
-        <div className="dashboard-nav-actions">
-          <Link to="/profile" className="dashboard-profile-link">
-            <User size={18} />
-            Profile
-          </Link>
-
-          <button
-            type="button"
-            onClick={logout}
-            className="dashboard-logout-button"
-          >
-            <LogOut size={18} />
-            Logout
-          </button>
-        </div>
-      </nav>
+      <Navbar />
+     
 
       <main className="dashboard-container">
         {/* Welcome */}
