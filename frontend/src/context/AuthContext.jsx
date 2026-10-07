@@ -15,9 +15,11 @@ export function AuthProvider({ children }) {
   const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
+
   const [token, setToken] = useState(
     () => localStorage.getItem("access_token")
   );
+
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -54,16 +56,34 @@ export function AuthProvider({ children }) {
     loadUser();
   }, [token]);
 
-  const login = (accessToken) => {
+  const login = async (accessToken) => {
+    // Store token first.
     localStorage.setItem("access_token", accessToken);
+
+    // Verify the token and load the user before continuing.
+    const response = await fetch(`${API_BASE_URL}/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      localStorage.removeItem("access_token");
+      throw new Error("Unable to verify your account. Please try again.");
+    }
+
+    const userData = await response.json();
+
     setToken(accessToken);
+    setUser(userData);
+    setIsLoading(false);
   };
 
   const logout = () => {
     localStorage.removeItem("access_token");
     setToken(null);
     setUser(null);
-    navigate("/login");
+    navigate("/login", { replace: true });
   };
 
   const value = {
