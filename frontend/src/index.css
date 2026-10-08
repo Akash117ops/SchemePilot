@@ -635,7 +635,7 @@ a {
   margin: 0 0 11px;
 
   color: var(--navy);
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .step-card p {
@@ -643,8 +643,8 @@ a {
 
   color: #64748b;
 
-  font-size: 14px;
-  line-height: 1.65;
+  font-size: 16px;
+  line-height: 1.7;
 }
 
 /* Responsive */
