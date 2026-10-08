@@ -88,12 +88,12 @@ function Home() {
             </p>
 
             <div className="hero-actions">
-              <Link to="/register" className="primary-button">
+              <Link to="/register" className="sp-button sp-button-primary sp-button-lg">
                 Check My Eligibility
                 <ArrowRight size={18} />
               </Link>
 
-              <Link to="/schemes" className="secondary-button">
+              <Link to="/schemes" className="sp-button sp-button-secondary sp-button-lg">
                 Explore Schemes
               </Link>
             </div>
@@ -307,7 +307,7 @@ function Home() {
               government schemes for you.
             </p>
 
-            <Link to="/register" className="primary-button light-button">
+           <Link to="/register" className="sp-button sp-button-primary sp-button-lg light-button">
               Check My Eligibility
               <ArrowRight size={18} />
             </Link>

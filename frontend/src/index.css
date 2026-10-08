@@ -3972,6 +3972,93 @@ a {
     flex-direction: column;
   }
 }
+/* ========================================
+   GLOBAL BUTTON SYSTEM
+======================================== */
+
+.sp-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 42px;
+  padding: 0 16px;
+
+  border: 1px solid transparent;
+  border-radius: 9px;
+
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+
+  text-decoration: none;
+  white-space: nowrap;
+
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.sp-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.sp-button-primary {
+  color: #ffffff;
+  background: #2563eb;
+  border-color: #2563eb;
+  box-shadow: 0 5px 14px rgba(37, 99, 235, 0.16);
+}
+
+.sp-button-primary:hover:not(:disabled) {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  box-shadow: 0 7px 18px rgba(37, 99, 235, 0.2);
+}
+
+.sp-button-secondary {
+  color: #334155;
+  background: #ffffff;
+  border-color: #d1d5db;
+}
+
+.sp-button-secondary:hover:not(:disabled) {
+  color: #1d4ed8;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.sp-button-danger {
+  color: #dc2626;
+  background: #ffffff;
+  border-color: #fecaca;
+}
+
+.sp-button-danger:hover:not(:disabled) {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.sp-button-sm {
+  min-height: 36px;
+  padding: 0 13px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.sp-button-lg {
+  min-height: 48px;
+  padding: 0 20px;
+  font-size: 15px;
+}
+
+.sp-button-full {
+  width: 100%;
+}
 /* =========================================================
    SCHEMEPILOT — GLOBAL UI SYSTEM
    ========================================================= */

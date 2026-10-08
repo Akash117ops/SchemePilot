@@ -289,7 +289,7 @@ function Register() {
           {/* Submit */}
           <button
             type="submit"
-            className="auth-submit"
+              className="sp-button sp-button-primary sp-button-full"
             disabled={
               !passwordIsValid ||
               !passwordsMatch ||

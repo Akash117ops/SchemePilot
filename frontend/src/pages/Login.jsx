@@ -144,10 +144,10 @@ function Login() {
 
           {/* Submit */}
           <button
-            type="submit"
-            className="auth-submit"
-            disabled={isLoading}
-          >
+  type="submit"
+  className="sp-button sp-button-primary sp-button-full"
+  disabled={isLoading}
+>
             {isLoading ? "Logging in..." : "Login"}
 
             {!isLoading && <ArrowRight size={18} />}
