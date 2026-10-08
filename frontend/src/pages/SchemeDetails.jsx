@@ -16,6 +16,8 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { getSchemeById } from "../services/api";
 
+import Navbar from "../components/Navbar";
+
 function SchemeDetails() {
   const { schemeId } = useParams();
 
@@ -47,8 +49,13 @@ function SchemeDetails() {
   if (isLoading) {
     return (
       <div className="scheme-details-loading">
-        <div className="protected-loading-spinner" />
-        <p>Loading scheme details...</p>
+        <Navbar />
+
+        <div className="scheme-details-loading-content">
+          <div className="protected-loading-spinner" />
+
+          <p>Loading scheme details...</p>
+        </div>
       </div>
     );
   }
@@ -56,23 +63,7 @@ function SchemeDetails() {
   if (error || !scheme) {
     return (
       <div className="scheme-details-page">
-        <nav className="scheme-details-navbar">
-          <Link
-            to="/eligibility"
-            className="scheme-details-back"
-          >
-            <ArrowLeft size={17} />
-            Back to results
-          </Link>
-
-          <Link to="/" className="scheme-details-brand">
-            <div className="logo-mark">
-              <Sparkles size={18} />
-            </div>
-
-            <span>SchemePilot</span>
-          </Link>
-        </nav>
+        <Navbar />
 
         <main className="scheme-details-content">
           <div className="scheme-details-error">
@@ -99,23 +90,7 @@ function SchemeDetails() {
 
   return (
     <div className="scheme-details-page">
-      <nav className="scheme-details-navbar">
-        <Link
-          to="/eligibility"
-          className="scheme-details-back"
-        >
-          <ArrowLeft size={17} />
-          Back to results
-        </Link>
-
-        <Link to="/" className="scheme-details-brand">
-          <div className="logo-mark">
-            <Sparkles size={18} />
-          </div>
-
-          <span>SchemePilot</span>
-        </Link>
-      </nav>
+      <Navbar />
 
       <main className="scheme-details-content">
         {/* HERO */}
@@ -280,8 +255,8 @@ function SchemeDetails() {
               <h2>Ready to apply?</h2>
 
               <p>
-                Visit the official scheme website or application
-                portal to learn more and apply.
+                Visit the official scheme website or
+                application portal to learn more and apply.
               </p>
 
               {scheme.application_link && (

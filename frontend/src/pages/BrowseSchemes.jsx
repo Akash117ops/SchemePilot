@@ -19,6 +19,8 @@ import {
   removeFavorite,
 } from "../services/api";
 
+import Navbar from "../components/Navbar";
+
 function BrowseSchemes() {
   const [schemes, setSchemes] = useState([]);
   const [favoriteIds, setFavoriteIds] = useState(
@@ -319,6 +321,8 @@ function BrowseSchemes() {
   if (isLoading) {
     return (
       <div className="browse-page">
+        <Navbar />
+
         <div className="browse-loading">
           <Loader2
             className="browse-spinner"
@@ -340,6 +344,8 @@ function BrowseSchemes() {
   if (error && schemes.length === 0) {
     return (
       <div className="browse-page">
+        <Navbar />
+
         <div className="browse-error">
           <h2>Unable to load schemes</h2>
 
@@ -364,6 +370,8 @@ function BrowseSchemes() {
 
   return (
     <div className="browse-page">
+      <Navbar />
+
       {/* HEADER */}
 
       <header className="browse-header">

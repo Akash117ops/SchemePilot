@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
 import {
-  ArrowLeft,
   Save,
   User,
-  Sparkles,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -13,6 +11,8 @@ import {
   updateProfile,
 } from "../services/api";
 import { useAuth } from "../context/AuthContext";
+
+import Navbar from "../components/Navbar";
 
 function Profile() {
   const { user } = useAuth();
@@ -92,7 +92,11 @@ function Profile() {
     };
 
     try {
-        console.log("PROFILE EXISTS BEFORE SUBMIT:", profileExists);
+      console.log(
+        "PROFILE EXISTS BEFORE SUBMIT:",
+        profileExists
+      );
+
       if (profileExists) {
         await updateProfile(profileData);
         setSuccess("Profile updated successfully.");
@@ -113,27 +117,20 @@ function Profile() {
   if (isLoading) {
     return (
       <div className="profile-loading">
-        <div className="protected-loading-spinner" />
-        <p>Loading your profile...</p>
+        <Navbar />
+
+        <div className="profile-loading-content">
+          <div className="protected-loading-spinner" />
+
+          <p>Loading your profile...</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="profile-page">
-      <nav className="profile-navbar">
-        <Link to="/dashboard" className="profile-back">
-          <ArrowLeft size={17} />
-          Dashboard
-        </Link>
-
-        <Link to="/" className="profile-brand">
-          <div className="logo-mark">
-            <Sparkles size={18} />
-          </div>
-          <span>SchemePilot</span>
-        </Link>
-      </nav>
+      <Navbar />
 
       <main className="profile-content">
         <motion.div
@@ -147,13 +144,16 @@ function Profile() {
           </div>
 
           <div>
-            <p className="profile-eyebrow">YOUR PROFILE</p>
+            <p className="profile-eyebrow">
+              YOUR PROFILE
+            </p>
 
             <h1>Tell us about yourself</h1>
 
             <p>
-              Your information helps SchemePilot determine which
-              government schemes may be relevant to you.
+              Your information helps SchemePilot determine
+              which government schemes may be relevant to
+              you.
             </p>
           </div>
         </motion.div>
@@ -189,7 +189,10 @@ function Profile() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="profile-form">
+          <form
+            onSubmit={handleSubmit}
+            className="profile-form"
+          >
             <div className="profile-form-grid">
               <div className="profile-field">
                 <label htmlFor="age">Age</label>
@@ -217,7 +220,10 @@ function Profile() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="">Select gender</option>
+                  <option value="">
+                    Select gender
+                  </option>
+
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                   <option value="Other">Other</option>
@@ -250,8 +256,14 @@ function Profile() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="">Select category</option>
-                  <option value="General">General</option>
+                  <option value="">
+                    Select category
+                  </option>
+
+                  <option value="General">
+                    General
+                  </option>
+
                   <option value="OBC">OBC</option>
                   <option value="SC">SC</option>
                   <option value="ST">ST</option>
@@ -295,8 +307,8 @@ function Profile() {
 
             <div className="profile-form-footer">
               <p>
-                This information is used only to determine your
-                scheme eligibility.
+                This information is used only to determine
+                your scheme eligibility.
               </p>
 
               <button

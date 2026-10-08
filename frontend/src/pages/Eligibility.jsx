@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import {
-  ArrowLeft,
   ArrowRight,
   CircleHelp,
   IndianRupee,
@@ -13,6 +12,8 @@ import {
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { checkEligibility } from "../services/api";
+
+import Navbar from "../components/Navbar";
 
 function Eligibility() {
   const [form, setForm] = useState({
@@ -61,7 +62,9 @@ function Eligibility() {
       eligibilityData.age < 1 ||
       eligibilityData.age > 120
     ) {
-      setError("Please enter a valid age between 1 and 120.");
+      setError(
+        "Please enter a valid age between 1 and 120."
+      );
       setIsLoading(false);
       return;
     }
@@ -91,20 +94,7 @@ function Eligibility() {
 
   return (
     <div className="eligibility-page">
-      <nav className="eligibility-navbar">
-        <Link to="/dashboard" className="eligibility-back">
-          <ArrowLeft size={17} />
-          Dashboard
-        </Link>
-
-        <Link to="/" className="eligibility-brand">
-          <div className="logo-mark">
-            <Sparkles size={18} />
-          </div>
-
-          <span>SchemePilot</span>
-        </Link>
-      </nav>
+      <Navbar />
 
       <main className="eligibility-content">
         {/* HEADER */}
@@ -123,12 +113,14 @@ function Eligibility() {
               SCHEME MATCHING
             </p>
 
-            <h1>Find schemes you may be eligible for</h1>
+            <h1>
+              Find schemes you may be eligible for
+            </h1>
 
             <p>
-              Tell us a little about yourself. We'll use these
-              details to find government schemes that match your
-              profile.
+              Tell us a little about yourself. We'll use
+              these details to find government schemes that
+              match your profile.
             </p>
           </div>
         </motion.div>
@@ -145,8 +137,8 @@ function Eligibility() {
               <h2>Your details</h2>
 
               <p>
-                Enter accurate information for more relevant
-                results.
+                Enter accurate information for more
+                relevant results.
               </p>
             </div>
 
@@ -203,9 +195,13 @@ function Eligibility() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="">Select gender</option>
+                  <option value="">
+                    Select gender
+                  </option>
                   <option value="Male">Male</option>
-                  <option value="Female">Female</option>
+                  <option value="Female">
+                    Female
+                  </option>
                   <option value="Other">Other</option>
                 </select>
               </div>
@@ -240,8 +236,12 @@ function Eligibility() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="">Select category</option>
-                  <option value="General">General</option>
+                  <option value="">
+                    Select category
+                  </option>
+                  <option value="General">
+                    General
+                  </option>
                   <option value="OBC">OBC</option>
                   <option value="SC">SC</option>
                   <option value="ST">ST</option>
@@ -293,8 +293,8 @@ function Eligibility() {
               <p>
                 <strong>Why do we need this?</strong>
                 <br />
-                These details help us compare your profile with
-                scheme eligibility requirements.
+                These details help us compare your profile
+                with scheme eligibility requirements.
               </p>
 
               <button
@@ -306,7 +306,9 @@ function Eligibility() {
                   ? "Checking..."
                   : "Find matching schemes"}
 
-                {!isLoading && <ArrowRight size={18} />}
+                {!isLoading && (
+                  <ArrowRight size={18} />
+                )}
               </button>
             </div>
           </form>
@@ -333,9 +335,9 @@ function Eligibility() {
                 </h2>
 
                 <p>
-                  Based on the information you provided, these
-                  schemes match the eligibility criteria in
-                  SchemePilot.
+                  Based on the information you provided,
+                  these schemes match the eligibility
+                  criteria in SchemePilot.
                 </p>
               </div>
 
@@ -394,7 +396,9 @@ function Eligibility() {
                     <div className="scheme-result-section">
                       <div className="scheme-result-section-title">
                         <FileText size={16} />
-                        <span>Required documents</span>
+                        <span>
+                          Required documents
+                        </span>
                       </div>
 
                       <p className="scheme-documents">
@@ -403,12 +407,12 @@ function Eligibility() {
                     </div>
 
                     <Link
-  to={`/schemes/${scheme.id}`}
-  className="scheme-result-button"
->
-  View scheme details
-  <ArrowRight size={17} />
-</Link>
+                      to={`/schemes/${scheme.id}`}
+                      className="scheme-result-button"
+                    >
+                      View scheme details
+                      <ArrowRight size={17} />
+                    </Link>
                   </motion.article>
                 ))}
               </div>
@@ -416,12 +420,15 @@ function Eligibility() {
               <div className="eligibility-empty">
                 <Search size={28} />
 
-                <h3>No matching schemes found</h3>
+                <h3>
+                  No matching schemes found
+                </h3>
 
                 <p>
-                  We couldn't find schemes matching all the
-                  details you entered. You can try checking again
-                  with different information.
+                  We couldn't find schemes matching all
+                  the details you entered. You can try
+                  checking again with different
+                  information.
                 </p>
               </div>
             )}

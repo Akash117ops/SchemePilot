@@ -12,6 +12,8 @@ import {
   removeFavorite,
 } from "../services/api";
 
+import Navbar from "../components/Navbar";
+
 function Favorites() {
   const [favorites, setFavorites] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -64,11 +66,14 @@ function Favorites() {
   if (isLoading) {
     return (
       <div className="favorites-page">
+        <Navbar />
+
         <div className="favorites-loading">
           <Loader2
             size={34}
             className="favorites-spinner"
           />
+
           <p>Loading your saved schemes...</p>
         </div>
       </div>
@@ -77,6 +82,8 @@ function Favorites() {
 
   return (
     <div className="favorites-page">
+      <Navbar />
+
       <header className="favorites-header">
         <Link
           to="/dashboard"
@@ -92,6 +99,7 @@ function Favorites() {
 
           <div>
             <h1>Saved Schemes</h1>
+
             <p>
               Keep track of government schemes you want
               to explore later.
@@ -133,6 +141,7 @@ function Favorites() {
             <div className="favorites-summary">
               <div>
                 <h2>Your saved schemes</h2>
+
                 <p>
                   {favorites.length} scheme
                   {favorites.length !== 1 ? "s" : ""} saved
@@ -177,7 +186,9 @@ function Favorites() {
                       onClick={() =>
                         handleRemove(scheme.id)
                       }
-                      disabled={removingId === scheme.id}
+                      disabled={
+                        removingId === scheme.id
+                      }
                       title="Remove from favorites"
                     >
                       {removingId === scheme.id ? (
@@ -199,6 +210,7 @@ function Favorites() {
 
                   <div className="favorite-benefit">
                     <span>Benefits</span>
+
                     <p>{scheme.benefits}</p>
                   </div>
 
