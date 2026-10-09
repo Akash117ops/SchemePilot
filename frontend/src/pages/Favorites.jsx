@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -45,6 +46,7 @@ function Favorites() {
   const handleRemove = async (schemeId) => {
     try {
       setRemovingId(schemeId);
+      setError("");
 
       await removeFavorite(schemeId);
 
@@ -110,7 +112,7 @@ function Favorites() {
 
       <main className="favorites-container">
         {error && (
-          <div className="favorites-error">
+          <div className="favorites-error" role="alert">
             {error}
           </div>
         )}
@@ -130,7 +132,7 @@ function Favorites() {
 
             <Link
               to="/schemes"
-              className="favorites-browse-button"
+              className="sp-button sp-button-primary sp-button-lg"
             >
               Browse Schemes
               <ArrowRight size={18} />
@@ -150,7 +152,7 @@ function Favorites() {
 
               <Link
                 to="/schemes"
-                className="favorites-explore-link"
+                className="sp-button sp-button-secondary"
               >
                 Explore more
                 <ArrowRight size={17} />
@@ -182,6 +184,7 @@ function Favorites() {
                     </span>
 
                     <button
+                      type="button"
                       className="favorite-remove-button"
                       onClick={() =>
                         handleRemove(scheme.id)
@@ -190,6 +193,7 @@ function Favorites() {
                         removingId === scheme.id
                       }
                       title="Remove from favorites"
+                      aria-label={`Remove ${scheme.name} from favorites`}
                     >
                       {removingId === scheme.id ? (
                         <Loader2
@@ -216,7 +220,7 @@ function Favorites() {
 
                   <Link
                     to={`/schemes/${scheme.id}`}
-                    className="favorite-details-link"
+                    className="sp-button sp-button-secondary sp-button-sm"
                   >
                     View scheme details
                     <ArrowRight size={17} />
