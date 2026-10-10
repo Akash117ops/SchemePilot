@@ -1,3 +1,4 @@
+
 import { Link, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -15,7 +16,6 @@ import {
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { getSchemeById } from "../services/api";
-
 import Navbar from "../components/Navbar";
 
 function SchemeDetails() {
@@ -32,9 +32,9 @@ function SchemeDetails() {
         setError("");
 
         const data = await getSchemeById(schemeId);
-
         setScheme(data);
       } catch (error) {
+        setScheme(null);
         setError(
           error.message || "Unable to load scheme details."
         );
@@ -53,7 +53,6 @@ function SchemeDetails() {
 
         <div className="scheme-details-loading-content">
           <div className="protected-loading-spinner" />
-
           <p>Loading scheme details...</p>
         </div>
       </div>
@@ -78,7 +77,7 @@ function SchemeDetails() {
 
             <Link
               to="/eligibility"
-              className="scheme-details-primary-button"
+              className="sp-button sp-button-primary"
             >
               Back to results
             </Link>
@@ -87,6 +86,14 @@ function SchemeDetails() {
       </div>
     );
   }
+
+  const incomeLimit =
+    scheme.income_limit !== null &&
+    scheme.income_limit !== undefined
+      ? `₹${Number(
+          scheme.income_limit
+        ).toLocaleString("en-IN")}`
+      : "Not specified";
 
   return (
     <div className="scheme-details-page">
@@ -111,14 +118,13 @@ function SchemeDetails() {
             </div>
 
             <h1>{scheme.name}</h1>
-
             <p>{scheme.description}</p>
           </div>
         </motion.section>
 
         {/* MAIN GRID */}
         <div className="scheme-details-grid">
-          {/* LEFT */}
+          {/* LEFT CONTENT */}
           <motion.div
             className="scheme-details-main"
             initial={{ opacity: 0, y: 20 }}
@@ -191,7 +197,6 @@ function SchemeDetails() {
               <div className="scheme-criteria-grid">
                 <div className="scheme-criteria-item">
                   <span>Age</span>
-
                   <strong>
                     {scheme.min_age} – {scheme.max_age} years
                   </strong>
@@ -199,39 +204,27 @@ function SchemeDetails() {
 
                 <div className="scheme-criteria-item">
                   <span>State</span>
-
                   <strong>{scheme.state}</strong>
                 </div>
 
                 <div className="scheme-criteria-item">
                   <span>Category</span>
-
                   <strong>{scheme.category}</strong>
                 </div>
 
                 <div className="scheme-criteria-item">
                   <span>Gender</span>
-
                   <strong>{scheme.gender}</strong>
                 </div>
 
                 <div className="scheme-criteria-item">
                   <span>Occupation</span>
-
                   <strong>{scheme.occupation}</strong>
                 </div>
 
                 <div className="scheme-criteria-item">
                   <span>Income limit</span>
-
-                  <strong>
-                    {scheme.income_limit !== null &&
-                    scheme.income_limit !== undefined
-                      ? `₹${Number(
-                          scheme.income_limit
-                        ).toLocaleString("en-IN")}`
-                      : "Not specified"}
-                  </strong>
+                  <strong>{incomeLimit}</strong>
                 </div>
               </div>
             </section>
@@ -241,7 +234,7 @@ function SchemeDetails() {
           <motion.aside
             className="scheme-details-sidebar"
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{
               duration: 0.45,
               delay: 0.15,
@@ -263,8 +256,8 @@ function SchemeDetails() {
                 <a
                   href={scheme.application_link}
                   target="_blank"
-                  rel="noreferrer"
-                  className="scheme-details-primary-button"
+                  rel="noopener noreferrer"
+                  className="scheme-details-primary-button sp-button sp-button-primary"
                 >
                   Apply / Learn more
                   <ExternalLink size={17} />
@@ -275,8 +268,8 @@ function SchemeDetails() {
                 <a
                   href={scheme.official_website}
                   target="_blank"
-                  rel="noreferrer"
-                  className="scheme-details-secondary-button"
+                  rel="noopener noreferrer"
+                  className="scheme-details-secondary-button sp-button sp-button-secondary"
                 >
                   Official website
                   <ExternalLink size={16} />
@@ -299,15 +292,7 @@ function SchemeDetails() {
 
                 <div>
                   <span>Income limit</span>
-
-                  <strong>
-                    {scheme.income_limit !== null &&
-                    scheme.income_limit !== undefined
-                      ? `₹${Number(
-                          scheme.income_limit
-                        ).toLocaleString("en-IN")}`
-                      : "Not specified"}
-                  </strong>
+                  <strong>{incomeLimit}</strong>
                 </div>
               </div>
 
@@ -323,10 +308,11 @@ function SchemeDetails() {
 
             <Link
               to="/eligibility"
-              className="scheme-details-back-results"
+              className="scheme-details-back-results sp-button sp-button-secondary"
             >
               <ArrowLeft size={16} />
               Check another profile
+              <ArrowRight size={16} />
             </Link>
           </motion.aside>
         </div>
