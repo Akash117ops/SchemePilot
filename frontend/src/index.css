@@ -2924,15 +2924,26 @@ a {
 .browse-scheme-card {
   display: flex;
   flex-direction: column;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 18px;
-  padding: 22px;
+  min-width: 0;
   min-height: 330px;
-  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.04);
+  padding: 22px;
+
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+
   transition:
     transform 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.browse-scheme-card:hover {
+  transform: translateY(-3px);
+  border-color: #cbd5e1;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
 }
 
 .browse-scheme-card:hover {
@@ -3296,16 +3307,32 @@ a {
   gap: 20px;
 }
 
+
 .favorite-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 18px;
-  padding: 22px;
-  min-height: 290px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.04);
+  min-width: 0;
+  min-height: 290px;
+  padding: 22px;
+
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
+
+.favorite-card:hover {
+  transform: translateY(-3px);
+  border-color: #cbd5e1;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+}
+
 
 .favorite-card-top {
   display: flex;
