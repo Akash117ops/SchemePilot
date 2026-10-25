@@ -113,7 +113,10 @@ function Dashboard() {
             </p>
           </div>
 
-          <Link to="/eligibility" className="dashboard-primary-button">
+          <Link
+  to="/eligibility"
+  className="sp-button sp-button-primary"
+>
             Find eligible schemes
             <ArrowRight size={18} />
           </Link>
@@ -193,7 +196,7 @@ function Dashboard() {
 
             <Link
               to="/profile"
-              className="dashboard-outline-button"
+              className="sp-button sp-button-secondary"
             >
               {profileCompletion === 100
                 ? "Update profile"
@@ -357,7 +360,7 @@ function Dashboard() {
             {favorites.length > 0 && (
               <Link
                 to="/favorites"
-                className="dashboard-view-all"
+                className="sp-button sp-button-secondary sp-button-sm"
               >
                 View all
                 <ArrowRight size={16} />
