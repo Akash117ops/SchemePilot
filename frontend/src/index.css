@@ -2394,12 +2394,13 @@ a {
   display: flex;
   align-items: flex-start;
   gap: 22px;
-  padding: 32px;
+  min-width: 0;
+  padding: 28px;
   margin-bottom: 24px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
 }
 
 .scheme-details-hero-icon {
@@ -2463,13 +2464,13 @@ a {
 }
 
 .scheme-details-card {
-  padding: 26px;
+  min-width: 0;
+  padding: 24px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 18px;
-  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.04);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
 }
-
 .scheme-details-section-heading {
   display: flex;
   align-items: center;
@@ -2580,11 +2581,15 @@ a {
 
 .scheme-details-action-card,
 .scheme-details-info-card {
+  min-width: 0;
   padding: 22px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 18px;
-  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.04);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .scheme-details-action-icon {
