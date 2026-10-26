@@ -4406,6 +4406,34 @@ textarea:focus-visible {
     width: min(100% - 24px, 1180px);
   }
 }
+
+/* =========================================================
+   GLOBAL TYPOGRAPHY — PHASE A
+   ========================================================= */
+
+:root {
+  --sp-font-size-body: 15px;
+  --sp-line-height-body: 1.65;
+  --sp-line-height-heading: 1.25;
+  --sp-letter-spacing-heading: -0.025em;
+}
+
+body {
+  font-size: var(--sp-font-size-body);
+  line-height: var(--sp-line-height-body);
+}
+
+h1,
+h2,
+h3 {
+  line-height: var(--sp-line-height-heading);
+  letter-spacing: var(--sp-letter-spacing-heading);
+}
+
+p {
+  line-height: var(--sp-line-height-body);
+}
+
 /* =========================================================
    REFINED INPUT FOCUS STATES
    ========================================================= */
