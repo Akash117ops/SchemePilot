@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+
+import { Link, NavLink } from "react-router-dom";
 import {
   Home,
   LogIn,
@@ -19,26 +20,35 @@ function Navbar() {
           <div className="navbar-brand-icon">
             <Sparkles size={19} />
           </div>
-
           <span>SchemePilot</span>
         </Link>
 
         <div className="navbar-actions">
-          <Link to="/" className="navbar-link">
+          <NavLink
+            to="/"
+            end
+            className="navbar-link"
+          >
             <Home size={16} />
             Home
-          </Link>
+          </NavLink>
 
           {isAuthenticated ? (
             <>
-              <Link to="/dashboard" className="navbar-link">
+              <NavLink
+                to="/dashboard"
+                className="navbar-link"
+              >
                 Dashboard
-              </Link>
+              </NavLink>
 
-              <Link to="/profile" className="navbar-link">
+              <NavLink
+                to="/profile"
+                className="navbar-link"
+              >
                 <User size={16} />
                 Profile
-              </Link>
+              </NavLink>
 
               <button
                 type="button"
@@ -51,18 +61,21 @@ function Navbar() {
             </>
           ) : (
             <>
-              <Link to="/login" className="navbar-link">
+              <NavLink
+                to="/login"
+                className="navbar-link"
+              >
                 <LogIn size={16} />
                 Login
-              </Link>
+              </NavLink>
 
-              <Link
+              <NavLink
                 to="/register"
                 className="navbar-button navbar-button-primary"
               >
                 <UserPlus size={16} />
                 Get started
-              </Link>
+              </NavLink>
             </>
           )}
         </div>

@@ -1997,7 +1997,8 @@ a {
 .eligibility-field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 8cd backend
+  px;
 }
 
 .eligibility-field label {
@@ -4619,6 +4620,23 @@ textarea:focus {
 .navbar-link:hover {
   color: #2563eb;
   background: #eff6ff;
+}
+
+/* Active navbar link */
+.navbar-link.active {
+  color: #1d4ed8;
+  background: #eff6ff;
+  font-weight: 600;
+}
+
+.navbar-link.active svg {
+  color: #2563eb;
+}
+
+/* Active registration button */
+.navbar-button-primary.active {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
 }
 
 .navbar-button {
