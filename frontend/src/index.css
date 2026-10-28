@@ -1762,7 +1762,7 @@ a {
 .profile-field {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
 }
 
 .profile-field label {
@@ -1997,7 +1997,7 @@ a {
 .eligibility-field {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
 }
 
 .eligibility-field label {
@@ -4282,16 +4282,20 @@ textarea:focus-visible {
   line-height: 1.7;
 }
 
+
 /* Generic form fields */
 
 .sp-input,
 .sp-select,
 .sp-textarea {
   width: 100%;
+  box-sizing: border-box;
   border: 1px solid var(--sp-border-strong);
   border-radius: var(--sp-radius-md);
-  background: white;
+  background: #ffffff;
   color: var(--sp-text);
+  font: inherit;
+  font-size: 14px;
 
   transition:
     border-color var(--sp-transition),
@@ -4300,14 +4304,19 @@ textarea:focus-visible {
 
 .sp-input,
 .sp-select {
-  min-height: 44px;
-  padding: 10px 13px;
+  height: 46px;
+  padding: 0 13px;
 }
 
 .sp-textarea {
   min-height: 110px;
   padding: 12px 13px;
   resize: vertical;
+}
+
+.sp-input::placeholder,
+.sp-textarea::placeholder {
+  color: #94a3b8;
 }
 
 .sp-input:hover,
@@ -4321,8 +4330,7 @@ textarea:focus-visible {
 .sp-textarea:focus {
   border-color: var(--sp-primary);
   outline: none;
-  box-shadow:
-    0 0 0 3px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 /* Generic status messages */
