@@ -4443,17 +4443,7 @@ p {
   line-height: var(--sp-line-height-body);
 }
 
-/* =========================================================
-   REFINED INPUT FOCUS STATES
-   ========================================================= */
 
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none !important;
-  border-color: #93b4ff !important;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.08) !important;
-}
 
 
 
