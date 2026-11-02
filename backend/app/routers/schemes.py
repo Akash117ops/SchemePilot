@@ -5,8 +5,12 @@ from app.dependencies import (
     get_current_admin,
 )
 from app.models.user import User
+from app.dependencies import (
+    get_db,
+    get_current_user,
+    get_current_admin,
+)
 
-from app.database import SessionLocal
 from app.schemas.scheme import SchemeCreate, SchemeResponse
 from app.schemas.eligibility import EligibilityRequest
 from app.services.scheme_service import (
@@ -29,12 +33,7 @@ router = APIRouter(
 )
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+
 
 
 @router.post("/", response_model=SchemeResponse)

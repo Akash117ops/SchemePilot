@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from app.dependencies import get_db, get_current_user
 
-from app.database import SessionLocal
 from app.models.user import User
 from app.schemas.favorite import FavoriteResponse
 from app.schemas.scheme import SchemeResponse
@@ -10,7 +10,7 @@ from app.services.favorite_service import (
     get_favorites,
     remove_favorite,
 )
-from app.utils.dependencies import get_current_user
+
 
 router = APIRouter(
     prefix="/favorites",
@@ -18,12 +18,7 @@ router = APIRouter(
 )
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+
 
 
 @router.post("/{scheme_id}", response_model=FavoriteResponse)
