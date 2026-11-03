@@ -1,6 +1,21 @@
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
+// Extract readable messages from FastAPI errors.
+function getErrorMessage(detail, fallback) {
+  if (typeof detail === "string") {
+    return detail;
+  }
+
+  if (Array.isArray(detail)) {
+    return detail
+      .map((error) => error.msg || "Invalid input")
+      .join(". ");
+  }
+
+  return fallback;
+}
+
 async function request(endpoint, options = {}) {
   const { body, ...requestOptions } = options;
 
@@ -10,23 +25,17 @@ async function request(endpoint, options = {}) {
       "Content-Type": "application/json",
       ...(options.headers || {}),
     },
-    body:
-      body !== undefined
-        ? JSON.stringify(body)
-        : undefined,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    console.log("API ERROR STATUS:", response.status);
-    console.log("API ERROR RESPONSE:", data);
-
     throw new Error(
-      typeof data?.detail === "string"
-        ? data.detail
-        : JSON.stringify(data?.detail) ||
-            "Something went wrong. Please try again."
+      getErrorMessage(
+        data?.detail,
+        "Something went wrong. Please try again."
+      )
     );
   }
 
@@ -58,7 +67,7 @@ export async function loginUser(email, password) {
 
   if (!response.ok) {
     throw new Error(
-      data?.detail || "Invalid email or password."
+      getErrorMessage(data?.detail, "Invalid email or password.")
     );
   }
 
@@ -70,9 +79,7 @@ export async function getProfile() {
 
   return request("/profile/", {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
 }
 
@@ -81,9 +88,7 @@ export async function createProfile(profileData) {
 
   return request("/profile/", {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
     body: profileData,
   });
 }
@@ -93,51 +98,45 @@ export async function updateProfile(profileData) {
 
   return request("/profile/", {
     method: "PUT",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
     body: profileData,
   });
 }
+
 export async function checkEligibility(profileData) {
   const token = localStorage.getItem("access_token");
 
   return request("/schemes/eligible", {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
     body: profileData,
   });
 }
+
 export async function getSchemeById(schemeId) {
   const token = localStorage.getItem("access_token");
 
   return request(`/schemes/${schemeId}`, {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
 }
+
 export async function getSchemes() {
   const token = localStorage.getItem("access_token");
 
   return request("/schemes/", {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
 }
+
 export async function getFavorites() {
   const token = localStorage.getItem("access_token");
 
   return request("/favorites", {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
 }
 
@@ -146,9 +145,7 @@ export async function addFavorite(schemeId) {
 
   return request(`/favorites/${schemeId}`, {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
 }
 
@@ -157,8 +154,6 @@ export async function removeFavorite(schemeId) {
 
   return request(`/favorites/${schemeId}`, {
     method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
 }
