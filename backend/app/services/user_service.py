@@ -1,3 +1,4 @@
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.models.user import User
@@ -7,7 +8,9 @@ from app.utils.jwt import create_access_token
 
 
 def create_user(db: Session, user: UserCreate):
-    existing_user = db.query(User).filter(User.email == user.email).first()
+    existing_user = db.query(User).filter(
+        User.email == user.email
+    ).first()
 
     if existing_user:
         return None
@@ -15,18 +18,29 @@ def create_user(db: Session, user: UserCreate):
     new_user = User(
         full_name=user.full_name,
         email=user.email,
-        password=hash_password(user.password)
+        password=hash_password(user.password),
     )
 
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+    try:
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
 
-    return new_user
+        return new_user
+
+    except IntegrityError:
+        db.rollback()
+        return None
+
+    except Exception:
+        db.rollback()
+        raise
 
 
 def login_user(db: Session, email: str, password: str):
-    db_user = db.query(User).filter(User.email == email).first()
+    db_user = db.query(User).filter(
+        User.email == email
+    ).first()
 
     if not db_user:
         return None
@@ -42,5 +56,5 @@ def login_user(db: Session, email: str, password: str):
 
     return {
         "access_token": token,
-        "token_type": "bearer"
+        "token_type": "bearer",
     }
