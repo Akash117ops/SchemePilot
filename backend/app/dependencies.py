@@ -1,3 +1,4 @@
+
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -30,6 +31,12 @@ def get_current_user(
         )
 
     email = payload.get("sub")
+
+    if not isinstance(email, str) or not email.strip():
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired token",
+        )
 
     user = db.query(User).filter(User.email == email).first()
 
