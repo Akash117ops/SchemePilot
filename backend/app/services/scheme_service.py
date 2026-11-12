@@ -1,9 +1,9 @@
+
 from sqlalchemy.orm import Session
-from sqlalchemy import asc, desc
+from sqlalchemy import asc, desc, func, or_
 
 from app.models.scheme import Scheme
 from app.models.profile import UserProfile
-
 from app.schemas.scheme import SchemeCreate
 from app.schemas.eligibility import EligibilityRequest
 
@@ -12,12 +12,10 @@ def create_scheme(db: Session, scheme: SchemeCreate):
     new_scheme = Scheme(
         name=scheme.name,
         description=scheme.description,
-
         benefits=scheme.benefits,
         required_documents=scheme.required_documents,
         application_link=scheme.application_link,
         official_website=scheme.official_website,
-
         state=scheme.state,
         category=scheme.category,
         gender=scheme.gender,
@@ -33,11 +31,8 @@ def create_scheme(db: Session, scheme: SchemeCreate):
 
     return new_scheme
 
-def update_scheme(
-    db: Session,
-    scheme_id: int,
-    updated_scheme: SchemeCreate,
-):
+
+def update_scheme(db: Session, scheme_id: int, updated_scheme: SchemeCreate):
     scheme = (
         db.query(Scheme)
         .filter(Scheme.id == scheme_id)
@@ -66,10 +61,8 @@ def update_scheme(
 
     return scheme
 
-def delete_scheme(
-    db: Session,
-    scheme_id: int,
-):
+
+def delete_scheme(db: Session, scheme_id: int):
     scheme = (
         db.query(Scheme)
         .filter(Scheme.id == scheme_id)
@@ -84,59 +77,76 @@ def delete_scheme(
 
     return True
 
+
 def get_all_schemes(db: Session):
     return db.query(Scheme).all()
 
 
 def get_scheme_by_id(db: Session, scheme_id: int):
-    return db.query(Scheme).filter(Scheme.id == scheme_id).first()
+    return (
+        db.query(Scheme)
+        .filter(Scheme.id == scheme_id)
+        .first()
+    )
+
+
+# --------------------------------------------------
+# ELIGIBILITY FILTERING
+# --------------------------------------------------
+
+def _get_eligible_schemes_query(db: Session, user):
+    query = db.query(Scheme)
+
+    # State matching: "Any" means all states.
+    query = query.filter(
+        or_(
+            func.lower(Scheme.state) == "any",
+            func.lower(Scheme.state) == user.state.lower(),
+        )
+    )
+
+    # Category, gender and occupation matching.
+    optional_filters = [
+        (Scheme.category, user.category),
+        (Scheme.gender, user.gender),
+        (Scheme.occupation, user.occupation),
+    ]
+
+    for column, value in optional_filters:
+        if value:
+            query = query.filter(
+                or_(
+                    column.is_(None),
+                    func.lower(column) == "any",
+                    func.lower(column) == value.lower(),
+                )
+            )
+
+    # Minimum and maximum age.
+    query = query.filter(
+        or_(
+            Scheme.min_age.is_(None),
+            Scheme.min_age <= user.age,
+        ),
+        or_(
+            Scheme.max_age.is_(None),
+            Scheme.max_age >= user.age,
+        ),
+    )
+
+    # Income eligibility.
+    query = query.filter(
+        or_(
+            Scheme.income_limit.is_(None),
+            Scheme.income_limit >= user.annual_income,
+        )
+    )
+
+    return query
 
 
 def find_eligible_schemes(db: Session, user: EligibilityRequest):
-    schemes = db.query(Scheme).all()
-
-    eligible = []
-
-    for scheme in schemes:
-
-        # State
-        if scheme.state and scheme.state.lower() != "any":
-            if scheme.state.lower() != user.state.lower():
-                continue
-
-        # Category
-        if scheme.category and scheme.category.lower() != "any":
-            if scheme.category.lower() != user.category.lower():
-                continue
-
-        # Gender
-        if scheme.gender and scheme.gender.lower() != "any":
-            if scheme.gender.lower() != user.gender.lower():
-                continue
-
-        # Occupation
-        if scheme.occupation and scheme.occupation.lower() != "any":
-            if scheme.occupation.lower() != user.occupation.lower():
-                continue
-
-        # Minimum age
-        if scheme.min_age is not None:
-            if user.age < scheme.min_age:
-                continue
-
-        # Maximum age
-        if scheme.max_age is not None:
-            if user.age > scheme.max_age:
-                continue
-
-        # Income limit
-        if scheme.income_limit is not None:
-            if user.annual_income > scheme.income_limit:
-                continue
-
-        eligible.append(scheme)
-
-    return eligible
+    return _get_eligible_schemes_query(db, user).all()
 
 
 def find_eligible_schemes_by_user(db: Session, user_id: int):
@@ -149,50 +159,12 @@ def find_eligible_schemes_by_user(db: Session, user_id: int):
     if profile is None:
         return None
 
-    schemes = db.query(Scheme).all()
+    return _get_eligible_schemes_query(db, profile).all()
 
-    eligible = []
 
-    for scheme in schemes:
-
-        # State
-        if scheme.state and scheme.state.lower() != "any":
-            if scheme.state.lower() != profile.state.lower():
-                continue
-
-        # Category
-        if scheme.category and scheme.category.lower() != "any":
-            if scheme.category.lower() != profile.category.lower():
-                continue
-
-        # Gender
-        if scheme.gender and scheme.gender.lower() != "any":
-            if scheme.gender.lower() != profile.gender.lower():
-                continue
-
-        # Occupation
-        if scheme.occupation and scheme.occupation.lower() != "any":
-            if scheme.occupation.lower() != profile.occupation.lower():
-                continue
-
-        # Minimum age
-        if scheme.min_age is not None:
-            if profile.age < scheme.min_age:
-                continue
-
-        # Maximum age
-        if scheme.max_age is not None:
-            if profile.age > scheme.max_age:
-                continue
-
-        # Income limit
-        if scheme.income_limit is not None:
-            if profile.annual_income > scheme.income_limit:
-                continue
-
-        eligible.append(scheme)
-
-    return eligible
+# --------------------------------------------------
+# SEARCH AND FILTERING
+# --------------------------------------------------
 
 def search_schemes(db: Session, keyword: str):
     return (
@@ -207,10 +179,10 @@ def search_schemes(db: Session, keyword: str):
 
 def filter_schemes(
     db: Session,
-    state: str = None,
-    category: str = None,
-    occupation: str = None,
-    gender: str = None,
+    state=None,
+    category=None,
+    occupation=None,
+    gender=None,
 ):
     query = db.query(Scheme)
 
@@ -229,11 +201,11 @@ def filter_schemes(
     return query.all()
 
 
-def get_schemes_paginated(
-    db: Session,
-    page: int = 1,
-    limit: int = 10,
-):
+# --------------------------------------------------
+# PAGINATION
+# --------------------------------------------------
+
+def get_schemes_paginated(db: Session, page: int = 1, limit: int = 10):
     offset = (page - 1) * limit
 
     return (
@@ -244,11 +216,11 @@ def get_schemes_paginated(
     )
 
 
-def sort_schemes(
-    db: Session,
-    sort_by: str = "name",
-    order: str = "asc",
-):
+# --------------------------------------------------
+# SORTING
+# --------------------------------------------------
+
+def sort_schemes(db: Session, sort_by: str = "name", order: str = "asc"):
     allowed_fields = {
         "name": Scheme.name,
         "income_limit": Scheme.income_limit,
@@ -262,14 +234,6 @@ def sort_schemes(
         return []
 
     if order.lower() == "desc":
-        return (
-            db.query(Scheme)
-            .order_by(desc(column))
-            .all()
-        )
+        return db.query(Scheme).order_by(desc(column)).all()
 
-    return (
-        db.query(Scheme)
-        .order_by(asc(column))
-        .all()
-    )
+    return db.query(Scheme).order_by(asc(column)).all()
