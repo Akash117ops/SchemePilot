@@ -1,4 +1,6 @@
+
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 
 from app.models.favorite import Favorite
 from app.models.scheme import Scheme
@@ -9,7 +11,7 @@ def add_favorite(
     user_id: int,
     scheme_id: int,
 ):
-    # Check if scheme exists
+    # Check whether the scheme exists.
     scheme = (
         db.query(Scheme)
         .filter(Scheme.id == scheme_id)
@@ -19,12 +21,12 @@ def add_favorite(
     if scheme is None:
         return None
 
-    # Check if already favorited
+    # Return the existing favorite if already present.
     existing = (
         db.query(Favorite)
         .filter(
             Favorite.user_id == user_id,
-            Favorite.scheme_id == scheme_id
+            Favorite.scheme_id == scheme_id,
         )
         .first()
     )
@@ -34,14 +36,37 @@ def add_favorite(
 
     favorite = Favorite(
         user_id=user_id,
-        scheme_id=scheme_id
+        scheme_id=scheme_id,
     )
 
-    db.add(favorite)
-    db.commit()
-    db.refresh(favorite)
+    try:
+        db.add(favorite)
+        db.commit()
+        db.refresh(favorite)
+        return favorite
 
-    return favorite
+    except IntegrityError:
+        db.rollback()
+
+        # Handle a concurrent request that created the same favorite.
+        existing = (
+            db.query(Favorite)
+            .filter(
+                Favorite.user_id == user_id,
+                Favorite.scheme_id == scheme_id,
+            )
+            .first()
+        )
+
+        if existing:
+            return existing
+
+        # Preserve unexpected integrity errors.
+        raise
+
+    except Exception:
+        db.rollback()
+        raise
 
 
 def get_favorites(
@@ -65,7 +90,7 @@ def remove_favorite(
         db.query(Favorite)
         .filter(
             Favorite.user_id == user_id,
-            Favorite.scheme_id == scheme_id
+            Favorite.scheme_id == scheme_id,
         )
         .first()
     )
@@ -73,7 +98,11 @@ def remove_favorite(
     if favorite is None:
         return False
 
-    db.delete(favorite)
-    db.commit()
+    try:
+        db.delete(favorite)
+        db.commit()
+        return True
 
-    return True
+    except Exception:
+        db.rollback()
+        raise
