@@ -1,69 +1,160 @@
-SchemePilot
+# SchemePilot
 
 A Python-based web application designed to help users discover government schemes and identify schemes that match their eligibility.
 
-Overview
+## Overview
 
 SchemePilot aims to simplify the process of finding relevant government welfare schemes by allowing users to create accounts, maintain personal profiles, explore schemes, and check eligibility based on their information.
 
-Tech Stack
+## Tech Stack
 
-Backend
+### Backend
+- Python
+- FastAPI
+- SQLAlchemy
+- PostgreSQL
+- Pydantic
+- JWT Authentication
+- Alembic (Database Migrations)
 
-Python
+### Frontend
+- React
+- JavaScript
+- CSS
+- React Router
 
-FastAPI
+## Current Features
 
-SQLAlchemy
+- User registration and login.
+- Password hashing and JWT-based authentication.
+- Protected user profile endpoints.
+- User profile management.
+- Government scheme creation and retrieval.
+- Scheme search, filtering, sorting, and pagination.
+- Eligibility matching based on:
+  - State
+  - Category
+  - Gender
+  - Occupation
+  - Age
+  - Annual income
+- Add and remove favorite schemes.
+- PostgreSQL database integration.
+- Database migration setup using Alembic.
 
-PostgreSQL
+## Project Structure
 
-Pydantic
+```text
+SchemePilot/
+│
+├── backend/
+│   ├── app/
+│   │   ├── models/
+│   │   ├── routers/
+│   │   ├── schemas/
+│   │   ├── services/
+│   │   ├── utils/
+│   │   ├── config.py
+│   │   ├── database.py
+│   │   ├── dependencies.py
+│   │   └── main.py
+│   │
+│   ├── migrations/
+│   ├── alembic.ini
+│   ├── requirements.txt
+│   └── .env.example
+│
+└── frontend/
+    └── src/
+```
 
-JWT Authentication
+## Running Locally
 
-Alembic (Database Migrations)
+### 1. Clone the repository
 
-Frontend
+```bash
+git clone https://github.com/Akash117ops/SchemePilot.git
+cd SchemePilot
+```
 
-React
+### 2. Backend setup
 
-JavaScript
+```bash
+cd backend
+python -m venv venv
+```
 
-CSS
+Activate the virtual environment on Windows:
 
-React Router
+```powershell
+.\venv\Scripts\Activate.ps1
+```
 
-Current Features
+Install dependencies:
 
-User registration and login.
+```bash
+pip install -r requirements.txt
+```
 
-Password hashing and JWT-based authentication.
+### 3. Environment configuration
 
-Protected user profile endpoints.
+Create a `.env` file inside the backend directory using `.env.example` as a reference.
 
-User profile management.
+Configure the required PostgreSQL database connection and authentication settings.
 
-Government scheme creation and retrieval.
+Never commit your actual `.env` file or expose your secret key.
 
-Scheme search, filtering, sorting, and pagination.
+### 4. Run the backend
 
-Eligibility matching based on:
+```bash
+uvicorn app.main:app --reload
+```
 
-State
+Backend:
 
-Category
+`http://127.0.0.1:8000`
 
-Gender
+API documentation:
 
-Occupation
+`http://127.0.0.1:8000/docs`
 
-Age
+### 5. Frontend setup
 
-Annual income
+Open another terminal:
 
-Add and remove favorite schemes.
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-PostgreSQL database integration.
+The frontend development server will display its local URL in the terminal.
 
-Database migration setup using Alembic.
+## Database
+
+SchemePilot uses PostgreSQL with SQLAlchemy ORM.
+
+Alembic is configured for database migration management.
+
+## Development Status
+
+**Project status: Under active development.**
+
+The backend includes authentication, user profiles, scheme management, eligibility matching, and favorite management. Frontend and integration work may continue as development progresses.
+
+## Future Improvements
+
+- Improve eligibility matching and query performance.
+- Expand automated backend testing.
+- Review database indexing and integrity constraints.
+- Improve scheme discovery and filtering.
+- Strengthen frontend-backend integration.
+- Prepare deployment configuration.
+
+## Repository
+
+[GitHub – SchemePilot](https://github.com/Akash117ops/SchemePilot)
+
+---
+
+*SchemePilot is a personal software development project intended to make government scheme discovery and eligibility checking more accessible.*
