@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+
+from pydantic import BaseModel, ConfigDict
 
 
 class SchemeCreate(BaseModel):
@@ -19,6 +20,16 @@ class SchemeCreate(BaseModel):
     income_limit: int | None = None
 
 
+class SchemeCardResponse(BaseModel):
+    id: int
+    name: str
+    description: str
+    benefits: str | None = None
+    required_documents: str | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class SchemeResponse(BaseModel):
     id: int
     name: str
@@ -37,5 +48,4 @@ class SchemeResponse(BaseModel):
     max_age: int | None = None
     income_limit: int | None = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
