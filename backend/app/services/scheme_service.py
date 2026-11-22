@@ -33,11 +33,7 @@ def create_scheme(db: Session, scheme: SchemeCreate):
 
 
 def update_scheme(db: Session, scheme_id: int, updated_scheme: SchemeCreate):
-    scheme = (
-        db.query(Scheme)
-        .filter(Scheme.id == scheme_id)
-        .first()
-    )
+    scheme = db.query(Scheme).filter(Scheme.id == scheme_id).first()
 
     if scheme is None:
         return None
@@ -63,11 +59,7 @@ def update_scheme(db: Session, scheme_id: int, updated_scheme: SchemeCreate):
 
 
 def delete_scheme(db: Session, scheme_id: int):
-    scheme = (
-        db.query(Scheme)
-        .filter(Scheme.id == scheme_id)
-        .first()
-    )
+    scheme = db.query(Scheme).filter(Scheme.id == scheme_id).first()
 
     if scheme is None:
         return False
@@ -83,11 +75,7 @@ def get_all_schemes(db: Session):
 
 
 def get_scheme_by_id(db: Session, scheme_id: int):
-    return (
-        db.query(Scheme)
-        .filter(Scheme.id == scheme_id)
-        .first()
-    )
+    return db.query(Scheme).filter(Scheme.id == scheme_id).first()
 
 
 # --------------------------------------------------
@@ -97,7 +85,6 @@ def get_scheme_by_id(db: Session, scheme_id: int):
 def _get_eligible_schemes_query(db: Session, user):
     query = db.query(Scheme)
 
-    # State matching: "Any" means all states.
     query = query.filter(
         or_(
             func.lower(Scheme.state) == "any",
@@ -105,7 +92,6 @@ def _get_eligible_schemes_query(db: Session, user):
         )
     )
 
-    # Category, gender and occupation matching.
     optional_filters = [
         (Scheme.category, user.category),
         (Scheme.gender, user.gender),
@@ -122,24 +108,13 @@ def _get_eligible_schemes_query(db: Session, user):
                 )
             )
 
-    # Minimum and maximum age.
     query = query.filter(
-        or_(
-            Scheme.min_age.is_(None),
-            Scheme.min_age <= user.age,
-        ),
-        or_(
-            Scheme.max_age.is_(None),
-            Scheme.max_age >= user.age,
-        ),
-    )
-
-    # Income eligibility.
-    query = query.filter(
+        or_(Scheme.min_age.is_(None), Scheme.min_age <= user.age),
+        or_(Scheme.max_age.is_(None), Scheme.max_age >= user.age),
         or_(
             Scheme.income_limit.is_(None),
             Scheme.income_limit >= user.annual_income,
-        )
+        ),
     )
 
     return query
@@ -167,12 +142,18 @@ def find_eligible_schemes_by_user(db: Session, user_id: int):
 # --------------------------------------------------
 
 def search_schemes(db: Session, keyword: str):
+    keyword = keyword.strip()
+
+    if not keyword:
+        return []
+
     return (
         db.query(Scheme)
         .filter(
-            (Scheme.name.ilike(f"%{keyword}%"))
-            | (Scheme.description.ilike(f"%{keyword}%"))
+            Scheme.name.ilike(f"%{keyword}%")
+            | Scheme.description.ilike(f"%{keyword}%")
         )
+        .order_by(Scheme.id)
         .all()
     )
 
@@ -198,7 +179,7 @@ def filter_schemes(
     if gender:
         query = query.filter(Scheme.gender.ilike(gender))
 
-    return query.all()
+    return query.order_by(Scheme.id).all()
 
 
 # --------------------------------------------------
@@ -210,6 +191,7 @@ def get_schemes_paginated(db: Session, page: int = 1, limit: int = 10):
 
     return (
         db.query(Scheme)
+        .order_by(Scheme.id)
         .offset(offset)
         .limit(limit)
         .all()
@@ -234,6 +216,12 @@ def sort_schemes(db: Session, sort_by: str = "name", order: str = "asc"):
         return []
 
     if order.lower() == "desc":
-        return db.query(Scheme).order_by(desc(column)).all()
+        sort_order = desc(column)
+    else:
+        sort_order = asc(column)
 
-    return db.query(Scheme).order_by(asc(column)).all()
+    return (
+        db.query(Scheme)
+        .order_by(sort_order, Scheme.id)
+        .all()
+    )
