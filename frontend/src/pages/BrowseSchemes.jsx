@@ -45,22 +45,39 @@ function BrowseSchemes() {
         setIsLoading(true);
         setError("");
 
-        const [schemeData, favoriteData] = await Promise.all([
+        const [schemeResult, favoriteResult] = await Promise.allSettled([
           getSchemes(),
           getFavorites(),
         ]);
+
+        // Schemes are essential for this page.
+        if (schemeResult.status === "rejected") {
+          throw schemeResult.reason;
+        }
+
+        const schemeData = schemeResult.value;
 
         setSchemes(
           Array.isArray(schemeData) ? schemeData : []
         );
 
-        setFavoriteIds(
-          new Set(
-            Array.isArray(favoriteData)
-              ? favoriteData.map((scheme) => scheme.id)
-              : []
-          )
-        );
+        // Favorites are optional.
+        if (favoriteResult.status === "fulfilled") {
+          const favoriteData = favoriteResult.value;
+
+          setFavoriteIds(
+            new Set(
+              Array.isArray(favoriteData)
+                ? favoriteData.map((scheme) => scheme.id)
+                : []
+            )
+          );
+        } else {
+          setFavoriteIds(new Set());
+          setError(
+            "Schemes loaded, but saved schemes could not be retrieved."
+          );
+        }
       } catch (err) {
         setError(
           err.message ||
