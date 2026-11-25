@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -16,25 +17,71 @@ import { useAuth } from "../context/AuthContext";
 import { getProfile, getFavorites } from "../services/api";
 import Navbar from "../components/Navbar";
 
+const PROFILE_FIELDS = [
+  "age",
+  "gender",
+  "state",
+  "category",
+  "occupation",
+  "annual_income",
+];
+
+const PROFILE_LABELS = {
+  age: "Age",
+  gender: "Gender",
+  state: "State",
+  category: "Category",
+  occupation: "Occupation",
+  annual_income: "Annual income",
+};
+
 function Dashboard() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   const [profile, setProfile] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
+  // LOAD PROFILE + FAVORITES
   useEffect(() => {
     const loadDashboardData = async () => {
       try {
-        const [profileData, favoriteData] = await Promise.all([
+        setIsLoading(true);
+        setError("");
+
+        const [profileResult, favoriteResult] = await Promise.allSettled([
           getProfile(),
           getFavorites(),
         ]);
 
-        setProfile(profileData);
-        setFavorites(Array.isArray(favoriteData) ? favoriteData : []);
-      } catch (error) {
-        console.error("Dashboard data error:", error);
+        const errors = [];
+
+        // Profile loading
+        if (profileResult.status === "fulfilled") {
+          setProfile(profileResult.value);
+        } else {
+          setProfile(null);
+          errors.push("Profile information could not be loaded.");
+        }
+
+        // Favorites loading
+        if (favoriteResult.status === "fulfilled") {
+          const favoriteData = favoriteResult.value;
+
+          setFavorites(
+            Array.isArray(favoriteData) ? favoriteData : []
+          );
+        } else {
+          setFavorites([]);
+          errors.push("Saved schemes could not be loaded.");
+        }
+
+        if (errors.length > 0) {
+          setError(errors.join(" "));
+        }
+      } catch {
+        setError("Unable to load dashboard information.");
       } finally {
         setIsLoading(false);
       }
@@ -43,17 +90,9 @@ function Dashboard() {
     loadDashboardData();
   }, []);
 
-  const profileFields = [
-    "age",
-    "gender",
-    "state",
-    "category",
-    "occupation",
-    "annual_income",
-  ];
-
+  // PROFILE COMPLETION
   const completedFields = profile
-    ? profileFields.filter(
+    ? PROFILE_FIELDS.filter(
         (field) =>
           profile[field] !== null &&
           profile[field] !== undefined &&
@@ -62,7 +101,7 @@ function Dashboard() {
     : 0;
 
   const profileCompletion = Math.round(
-    (completedFields / profileFields.length) * 100
+    (completedFields / PROFILE_FIELDS.length) * 100
   );
 
   const profileMessage = useMemo(() => {
@@ -86,10 +125,9 @@ function Dashboard() {
   return (
     <div className="dashboard-page">
       <Navbar />
-     
 
       <main className="dashboard-container">
-        {/* Welcome */}
+        {/* WELCOME */}
         <motion.section
           className="dashboard-welcome"
           initial={{ opacity: 0, y: 15 }}
@@ -103,8 +141,7 @@ function Dashboard() {
             </p>
 
             <h1>
-              Welcome back,{" "}
-              <span>{displayName}</span> 👋
+              Welcome back, <span>{displayName}</span> 👋
             </h1>
 
             <p>
@@ -114,15 +151,22 @@ function Dashboard() {
           </div>
 
           <Link
-  to="/eligibility"
-  className="sp-button sp-button-primary"
->
+            to="/eligibility"
+            className="sp-button sp-button-primary"
+          >
             Find eligible schemes
             <ArrowRight size={18} />
           </Link>
         </motion.section>
 
-        {/* Stats */}
+        {/* ERROR MESSAGE */}
+        {error && (
+          <div className="favorites-error" role="alert">
+            {error}
+          </div>
+        )}
+
+        {/* STATS */}
         <section className="dashboard-stats">
           <motion.div
             className="dashboard-stat-card"
@@ -177,7 +221,7 @@ function Dashboard() {
           </motion.div>
         </section>
 
-        {/* Profile completion */}
+        {/* PROFILE COMPLETION */}
         <motion.section
           className="dashboard-profile-card"
           initial={{ opacity: 0, y: 15 }}
@@ -208,7 +252,7 @@ function Dashboard() {
           <div className="dashboard-progress-area">
             <div className="dashboard-progress-header">
               <span>Profile progress</span>
-              <strong>{profileCompletion}%</strong>
+              <strong>{isLoading ? "—" : `${profileCompletion}%`}</strong>
             </div>
 
             <div className="dashboard-progress-track">
@@ -227,20 +271,11 @@ function Dashboard() {
           </div>
 
           <div className="dashboard-profile-checks">
-            {profileFields.map((field) => {
+            {PROFILE_FIELDS.map((field) => {
               const completed =
                 profile?.[field] !== null &&
                 profile?.[field] !== undefined &&
                 profile?.[field] !== "";
-
-              const labels = {
-                age: "Age",
-                gender: "Gender",
-                state: "State",
-                category: "Category",
-                occupation: "Occupation",
-                annual_income: "Annual income",
-              };
 
               return (
                 <div
@@ -257,14 +292,14 @@ function Dashboard() {
                     <div className="dashboard-check-empty" />
                   )}
 
-                  <span>{labels[field]}</span>
+                  <span>{PROFILE_LABELS[field]}</span>
                 </div>
               );
             })}
           </div>
         </motion.section>
 
-        {/* Quick actions */}
+        {/* QUICK ACTIONS */}
         <section className="dashboard-section">
           <div className="dashboard-section-heading">
             <div>
@@ -285,8 +320,7 @@ function Dashboard() {
               <div>
                 <h3>Find eligible schemes</h3>
                 <p>
-                  Check which government schemes match your
-                  profile.
+                  Check which government schemes match your profile.
                 </p>
               </div>
 
@@ -349,7 +383,7 @@ function Dashboard() {
           </div>
         </section>
 
-        {/* Saved schemes preview */}
+        {/* SAVED SCHEMES PREVIEW */}
         <section className="dashboard-section">
           <div className="dashboard-section-heading">
             <div>
